@@ -86,6 +86,38 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(publicDir));
 
+app.get('/api/shows', (req, res, next) => {
+  const query = Show.find();
+
+  if (req.query.genre) {
+    query.where({ genre: req.query.genre });
+  } else if (req.query.alphabet) {
+    query.where({ name: new RegExp(`^[${req.query.alphabet}]`, 'i') });
+  } else {
+    query.limit(12);
+  }
+
+  return query.exec((err, shows) => {
+    if (err) {
+      return next(err);
+    }
+
+    return res.send(shows);
+  });
+});
+
+app.get('/api/shows/:id', (req, res, next) => Show.findById(
+  req.params.id,
+  (err, show) => err ? next(err) : res.send(show))
+);
+
+app.get('*', (req, res) => res.redirect(`/#${req.originalUrl}`));
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.send(500, { message: err.message });
+});
+
 app.listen(
   app.get('port'),
   () => console.log(`Express server listening on port ${app.get('port')}`)
