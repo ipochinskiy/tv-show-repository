@@ -11,6 +11,8 @@ const routes = require('./routes');
 const baseDir = path.join(__dirname, '..');
 const publicDir = path.join(baseDir, 'public');
 
+const port = process.env.PORT || 3000;
+
 mongoose.Promise = global.Promise;
 mongoose.connect('localhost');
 
@@ -30,5 +32,5 @@ app.use((err, req, res) => {
 	res.status(500).send({ message: err.message });
 });
 
-app.listen(process.env.PORT || 3000, () =>
-	console.log(`Express server listening on port ${app.get('port')}`));
+app.listen(port, () =>
+	console.log(`Express server listening on port ${port}`));
