@@ -10,6 +10,7 @@ const baseUrl = 'http://thetvdb.com';
 const postersUrl = `${baseUrl}/banners`;
 const apiUrl = `${baseUrl}/api`;
 
+// TODO: move it into config
 const apiKey = '9EF1D1E7D28FDA0B';
 
 const parseXml = xml => new Promise((resolve, reject) =>
@@ -39,4 +40,4 @@ module.exports = {
 		const base64 = response.body.toString('base64');
 		return `data:${type};base64,${base64}`;
 	}),
-}
+};

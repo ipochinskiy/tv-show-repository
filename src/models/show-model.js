@@ -17,13 +17,14 @@ exports.getFilteredShows = function ({ genre, alphabet, limit = 12 }) {
 
 exports.getShow = ({ id }) => Show.findById(id).exec().then(show => show && show._doc);
 
-exports.addShow = ({ seriesName }, req, res, next) => tvDbService
+exports.addShow = ({ seriesName }) => tvDbService
 	.searchSeriesByName({ seriesName })
 	.then(result => {
 		const series = result && result.data && result.data.series;
 
 		if (!series) {
-			throw { notFound: true };
+			const err = { notFound: true };
+			throw err;
 		}
 
 		return Array.isArray(series)
@@ -31,15 +32,16 @@ exports.addShow = ({ seriesName }, req, res, next) => tvDbService
 		//        will return 403 with unfriendly message (i.g. "wow")
 			? series[0].seriesid
 			: series.seriesid;
-	}).then(seriesId => {
-		return tvDbService.getSeriesInfo({ seriesId });
-	}).then(result => {
+	})
+	.then(seriesId => tvDbService.getSeriesInfo({ seriesId }))
+	.then(result => {
 		const data = result && result.data;
 		const series = data.series;
 		const episodes = [].concat(data.episode);
 
 		if (!series) {
-			throw { tvdbError: true };
+			const err = { tvdbError: true };
+			throw err;
 		}
 
 		const show = {
@@ -68,18 +70,17 @@ exports.addShow = ({ seriesName }, req, res, next) => tvDbService
 
 		return tvDbService.loadPoster({ poster: show.posterLink })
 			.then(posterData => {
-				show.posterData = posterData
+				show.posterData = posterData;
 				return new Show(show);
 			});
-	}).then(show => {
-		return new Promise((resolve, reject) => {
-			show.save(err => {
-				if (err) {
-					reject(err.code === 11000
-						? { alreadyExists: true }
-						: err);
-				}
-				resolve(show);
-			});
+	})
+	.then(show => new Promise((resolve, reject) => {
+		show.save(err => {
+			if (err) {
+				reject(err.code === 11000
+					? { alreadyExists: true }
+					: err);
+			}
+			resolve(show);
 		});
-	});
+	}));

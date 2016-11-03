@@ -27,10 +27,10 @@ const routes = [
 				.toLowerCase()
 				.replace(/ /g, '_')
 				.replace(/[^\w-]+/g, '');
-			
+
 			return showModel
-				.addShow({ seriesName, })
-				.then(result => res.status(200).send())
+				.addShow({ seriesName })
+				.then(() => res.status(200).send())
 				.catch(err => {
 					if (err.notFound) {
 						const message = `${req.body.showName} was not found.`;
@@ -38,11 +38,9 @@ const routes = [
 					} else if (err.alreadyExists) {
 						const message = `${req.body.showName} already exists.`;
 						return res.status(409).send({ message });
-					} else {
-						console.log(err.message, err.stack);
-						const message = `Unexpected error: ${err.message}!`;
-						return res.status(500).send({ message });
 					}
+
+					return next(err);
 				});
 		},
 	}, {
