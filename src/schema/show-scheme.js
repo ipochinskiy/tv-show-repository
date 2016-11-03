@@ -12,7 +12,6 @@ const showSchema = new mongoose.Schema({
   rating: Number,
   ratingCount: Number,
   status: String,
-  poster: String,
   subscribers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -24,6 +23,8 @@ const showSchema = new mongoose.Schema({
     firstAired: Date,
     overview: String,
   }],
+	posterLink: String,
+	posterData: String,
 });
 
 const Show = mongoose.model('Show', showSchema);

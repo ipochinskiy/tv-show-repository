@@ -42,7 +42,7 @@ exports.addShow = ({ seriesName }, req, res, next) => tvDbService
 			throw { tvdbError: true };
 		}
 
-		return new Show({
+		const show = {
 			_id: series.id,
 			name: series.seriesname,
 			airsDayOfWeek: series.airs_dayofweek,
@@ -56,7 +56,7 @@ exports.addShow = ({ seriesName }, req, res, next) => tvDbService
 			ratingCount: series.ratingcount,
 			runtime: series.runtime,
 			status: series.status,
-			poster: series.poster,
+			posterLink: series.poster,
 			episodes: episodes.map(episode => ({
 				season: episode.seasonnumber,
 				episodeNumber: episode.episodenumber,
@@ -64,15 +64,14 @@ exports.addShow = ({ seriesName }, req, res, next) => tvDbService
 				firstAired: episode.firstaired,
 				overview: episode.overview,
 			})),
-		});
-	}).then(show => {
-		return tvDbService.loadPoster({ poster: show.poster })
-			.then(posterString => {
-				const res = Object.assign({}, show, { poster: posterString });
-				return res;
+		};
+
+		return tvDbService.loadPoster({ poster: show.posterLink })
+			.then(posterData => {
+				show.posterData = posterData
+				return new Show(show);
 			});
 	}).then(show => {
-		console.log('show.poster:', show.poster.slice(0, 200));
 		return new Promise((resolve, reject) => {
 			show.save(err => {
 				if (err) {
