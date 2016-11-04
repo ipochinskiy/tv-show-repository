@@ -70,6 +70,7 @@ exports.addShow = ({ seriesName }) => tvDbService
 
 		return tvDbService.loadPoster({ poster: show.posterLink })
 			.then(posterData => {
+				// TODO: save this data into a local file
 				show.posterData = posterData;
 				return new Show(show);
 			});

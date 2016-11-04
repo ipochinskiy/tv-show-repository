@@ -14,6 +14,7 @@ const publicDir = path.join(baseDir, 'public');
 const port = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
+// FIXME: crashes if unnable to connect to the db
 mongoose.connect('localhost');
 
 const app = express();
