@@ -3,3 +3,4 @@ node_modules
 .DS_Store
 *.css
 npm-debug.log
+public/posters
