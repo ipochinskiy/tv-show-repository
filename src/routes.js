@@ -1,5 +1,6 @@
 const auth = require('./auth');
 const showModel = require('./models/show-model');
+const User = require('./schema/user-scheme');
 
 const routes = [
 	{
