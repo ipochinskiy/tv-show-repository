@@ -13,6 +13,7 @@ const routes = require('./routes');
 const baseDir = path.join(__dirname, '..');
 const publicDir = path.join(baseDir, 'public');
 
+// TODO: replace with config property
 const port = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise;
@@ -28,6 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
 app.use(cookieParser());
+// TODO: replace with config property
 app.use(session({ secret: 'keyboard cat' }));
 
 app.use(auth.initialize());
