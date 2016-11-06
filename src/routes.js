@@ -1,4 +1,5 @@
 const auth = require('./auth');
+const tasker = require('./tasker');
 const showModel = require('./models/show-model');
 const userModel = require('./models/user-model');
 
@@ -40,7 +41,13 @@ const routes = [
 
 			return showModel
 				.addShow({ seriesName })
-				.then(() => res.status(200).send())
+				.then(show => {
+					res.status(200).send();
+
+					// TODO: replace the `sugar` package with custom implementation of the function below
+					const alertDate = Date.create(`Next ${show.airsDayOfWeek} at ${show.airsTime}`).rewind({ hour: 2});
+					tasker.scheduleJob(alertDate, show);
+				})
 				.catch(err => {
 					if (err.notFound) {
 						const message = `${req.body.showName} was not found.`;

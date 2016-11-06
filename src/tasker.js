@@ -47,3 +47,8 @@ agenda.start();
 agenda.on('start', job => console.log("Job %s starting", job.attrs.name));
 
 agenda.on('complete', job => console.log("Job %s finished", job.attrs.name));
+
+// TODO: job name as a parameter
+exports.scheduleJob = (alertDate, show) => {
+    return agenda.schedule(alertDate, 'send email alert', show.name).repeatEvery('1 week');
+}
