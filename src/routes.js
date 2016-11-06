@@ -1,4 +1,4 @@
-const AUTH = require('./auth').AUTH;
+const auth = require('./auth');
 const showModel = require('./models/show-model');
 
 const routes = [
@@ -47,7 +47,7 @@ const routes = [
 	}, {
 		endpoint: '/api/login',
 		method: 'post',
-		auth: AUTH.authenticate,
+		auth: auth.authenticate,
 		action: (req, res, next) => {
 			// TODO: replace the user with something more secure
 			res.cookie('user', JSON.stringify(req.user));
