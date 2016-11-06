@@ -85,3 +85,35 @@ exports.addShow = ({ seriesName }) => tvDbService
 			resolve(show);
 		});
 	}));
+
+exports.subscribeTo = ({ showId, userId }) => Show.findById(showId).exec()
+	.then(show => {
+		if (!show) {
+			const err = { notFound: true };
+			throw err;
+		}
+
+		const alreadySubscribed = show.subscribers
+			.filter(id => id === userId).length > 0;
+
+		if (!alreadySubscribed) {
+			show.subscribers.push(userId);
+		}
+
+		return show.save();
+	});
+
+exports.unsubscribeFrom = ({ showId, userId }) => Show.findById(showId).exec()
+	.then(show => {
+		if (!show) {
+			const err = { notFound: true };
+			throw err;
+		}
+
+		const userIndex = show.subscribers.indexOf(userId);
+		if (userIndex > -1) {
+			show.subscribers.splice(userIndex, 1);
+		}
+
+		return show.save();
+	});
