@@ -19,9 +19,12 @@ mongoose.connect('localhost');
 
 const app = express();
 
+// TODO: replace with config property
 app.use(logger('dev'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
+
 app.use(cookieParser());
 app.use(express.static(publicDir));
 
