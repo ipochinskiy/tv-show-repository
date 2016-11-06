@@ -1,3 +1,4 @@
+const AUTH = require('./auth').AUTH;
 const showModel = require('./models/show-model');
 
 const routes = [
@@ -42,6 +43,37 @@ const routes = [
 
 					return next(err);
 				});
+		},
+	}, {
+		endpoint: '/api/login',
+		method: 'post',
+		auth: AUTH.authenticate,
+		action: (req, res, next) => {
+			// TODO: replace the user with something more secure
+			res.cookie('user', JSON.stringify(req.user));
+			res.status(200).send(req.user);
+		},
+	}, {
+		endpoint: '/api/logout',
+		method: 'get',
+		action: (req, res, next) => {
+			req.logout();
+			res.status(200).send();
+		},
+	}, {
+		endpoint: '/api/signup',
+		method: 'post',
+		action: (req, res, next) => {
+			const user = new User({
+				email: req.body.email,
+				password: req.body.password
+			});
+			user.save(err => {
+				if (err) {
+					return next(err);
+				}
+				res.status(200).send();
+			});
 		},
 	}, {
 		endpoint: '*',
