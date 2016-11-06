@@ -1,13 +1,32 @@
 const auth = require('./auth');
 const tasker = require('./tasker');
+
 const showModel = require('./models/show-model');
 const userModel = require('./models/user-model');
+
+const http = {
+	STATUS: {
+		ALREADY_EXISTS: 409,
+		NOT_FOUND: 404,
+		OK: 200,
+		UNAUTHORIZED: 401,
+	},
+};
+
+const respond = (code, res, body) => res.status(code).send(body || '');
+
+const httpUtils = {
+	respondAlreadyExists: respond.bind(null, http.STATUS.ALREADY_EXISTS),
+	respondNotFound: respond.bind(null, http.STATUS.NOT_FOUND),
+	respondOk: respond.bind(null, http.STATUS.OK),
+	respondUnauthorized: respond.bind(null, http.STATUS.UNAUTHORIZED),
+}
 
 const ensureAuthenticated = (req, res, next) => {
 	if (auth.isAuthenticated(req)) {
 		next();
 	} else {
-		res.status(401).send();
+		httpUtils.respondUnauthorized(res);
 	}
 }
 
@@ -20,7 +39,7 @@ const routes = [
 
 			return showModel
 				.getFilteredShows({ genre, alphabet })
-				.then(shows => res.status(200).send(shows))
+				.then(shows => httpUtils.respondOk(res, shows))
 				.catch(err => next(err));
 		},
 	}, {
@@ -28,7 +47,7 @@ const routes = [
 		method: 'get',
 		action: (req, res, next) => showModel
 			.getShow({ id: req.params.id })
-			.then(show => res.status(200).send(show))
+			.then(show => httpUtils.respondOk(res, show))
 			.catch(err => next(err)),
 	}, {
 		endpoint: '/api/shows',
@@ -42,7 +61,7 @@ const routes = [
 			return showModel
 				.addShow({ seriesName })
 				.then(show => {
-					res.status(200).send();
+					httpUtils.respondOk(res);
 
 					// TODO: replace the `sugar` package with custom implementation of the function below
 					const alertDate = Date.create(`Next ${show.airsDayOfWeek} at ${show.airsTime}`).rewind({ hour: 2});
@@ -51,10 +70,10 @@ const routes = [
 				.catch(err => {
 					if (err.notFound) {
 						const message = `${req.body.showName} was not found.`;
-						return res.status(404).send({ message });
+						return httpUtils.respondNotFound(res, message);
 					} else if (err.alreadyExists) {
 						const message = `${req.body.showName} already exists.`;
-						return res.status(409).send({ message });
+						return httpUtils.respondAlreadyExists(res, message);
 					}
 
 					return next(err);
@@ -67,14 +86,14 @@ const routes = [
 		action: (req, res, next) => {
 			// TODO: replace the user with something more secure
 			res.cookie('user', JSON.stringify(req.user));
-			res.status(200).send(req.user);
+			httpUtils.respondOk(res, req.user);
 		},
 	}, {
 		endpoint: '/api/logout',
 		method: 'get',
 		action: (req, res, next) => {
 			req.logout();
-			res.status(200).send();
+			httpUtils.respondOk(res);
 		},
 	}, {
 		endpoint: '/api/signup',
@@ -84,7 +103,7 @@ const routes = [
 				email: req.body.email,
 				password: req.body.password
 			})
-			.then(() => res.status(200).send())
+			.then(() => httpUtils.respondOk(res))
 			.catch(err => next(err)),
 	}, {
 		endpoint: '/api/subscribe',
@@ -94,11 +113,11 @@ const routes = [
 				showId: req.body.showId,
 				userId: req.user.id,
 			})
-			.then(() => res.status(200).send())
+			.then(() => httpUtils.respondOk(res))
 			.catch(err => {
 				if (err.notFound) {
 					const message = `${req.body.showName} was not found.`;
-					return res.status(404).send({ message });
+					return httpUtils.respondNotFound(res, message);
 				}
 
 				return next(err);
@@ -111,11 +130,11 @@ const routes = [
 				showId: req.body.showId,
 				userId: req.user.id,
 			})
-			.then(() => res.status(200).send())
+			.then(() => httpUtils.respondOk(res))
 			.catch(err => {
 				if (err.notFound) {
 					const message = `${req.body.showName} was not found.`;
-					return res.status(404).send({ message });
+					return httpUtils.respondNotFound(res, message);
 				}
 
 				return next(err);
