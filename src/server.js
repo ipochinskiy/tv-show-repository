@@ -4,8 +4,9 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const logger = require('morgan');
-const mongoose = require('mongoose');
 const session = require('express-session');
+
+const database = require('./database').initialize();
 
 const auth = require('./auth');
 const routes = require('./routes');
@@ -15,12 +16,6 @@ const publicDir = path.join(baseDir, 'public');
 
 // TODO: replace with config property
 const port = process.env.PORT || 3000;
-
-mongoose.Promise = global.Promise;
-// FIXME: crashes if unnable to connect to the db
-mongoose.connect('localhost');
-mongoose.connection.on('error', () =>
-	console.error(`Unnable to establish connection with MongoDB. Make sure it's running.`));
 
 const app = express();
 
