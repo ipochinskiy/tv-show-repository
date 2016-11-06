@@ -6,46 +6,41 @@ const express = require('express');
 const logger = require('morgan');
 const session = require('express-session');
 
-const database = require('./database').initialize();
+exports.initialize = function ({ env = 'dev', publicPath, sessionSecret, auth }) {
+	const app = express();
 
-const auth = require('./auth');
-const routes = require('./routes');
+	app.use(logger(env));
 
-const baseDir = path.join(__dirname, '..');
-const publicDir = path.join(baseDir, 'public');
+	app.use(bodyParser.json());
+	app.use(bodyParser.urlencoded());
 
-// TODO: replace with config property
-const port = process.env.PORT || 3000;
+	app.use(cookieParser());
+	app.use(session({ secret: sessionSecret }));
 
-const app = express();
+	app.use(auth.initialize());
+	app.use(auth.session());
 
-// TODO: replace with config property
-app.use(logger('dev'));
+	app.use(express.static(publicPath));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+	return {
+		useRoutes: routesConfig => {
+			routesConfig.forEach(route => {
+				if (route.auth) {
+					app[route.method](route.endpoint, route.auth, route.action);
+				}
 
-app.use(cookieParser());
-// TODO: replace with config property
-app.use(session({ secret: 'keyboard cat' }));
+				app[route.method](route.endpoint, route.action);
+			});
 
-app.use(auth.initialize());
-app.use(auth.session());
+			app.use((err, req, res) => {
+				console.error(err.stack);
+				res.status(500).send({ message: err.message });
+			});
+		},
 
-app.use(express.static(publicDir));
-
-routes.forEach(route => {
-	if (route.auth) {
-		app[route.method](route.endpoint, route.auth, route.action);
+		start: function(port = 3000) {
+			app.listen(port, () =>
+				console.log(`Express server listening on port ${port}`));
+		},
 	}
-
-	app[route.method](route.endpoint, route.action);
-});
-
-app.use((err, req, res) => {
-	console.error(err.stack);
-	res.status(500).send({ message: err.message });
-});
-
-app.listen(port, () =>
-	console.log(`Express server listening on port ${port}`));
+}
