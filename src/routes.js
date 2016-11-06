@@ -1,6 +1,6 @@
 const auth = require('./auth');
 const showModel = require('./models/show-model');
-const User = require('./schema/user-scheme');
+const userModel = require('./models/user-model');
 
 const routes = [
 	{
@@ -64,18 +64,13 @@ const routes = [
 	}, {
 		endpoint: '/api/signup',
 		method: 'post',
-		action: (req, res, next) => {
-			const user = new User({
+		action: (req, res, next) => userModel
+			.createUser({
 				email: req.body.email,
 				password: req.body.password
-			});
-			user.save(err => {
-				if (err) {
-					return next(err);
-				}
-				res.status(200).send();
-			});
-		},
+			})
+			.then(() => res.status(200).send())
+			.catch(err => next(err)),
 	}, {
 		endpoint: '*',
 		method: 'get',
