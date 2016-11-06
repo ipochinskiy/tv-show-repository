@@ -19,6 +19,8 @@ const port = process.env.PORT || 3000;
 mongoose.Promise = global.Promise;
 // FIXME: crashes if unnable to connect to the db
 mongoose.connect('localhost');
+mongoose.connection.on('error', () =>
+	console.error(`Unnable to establish connection with MongoDB. Make sure it's running.`));
 
 const app = express();
 
