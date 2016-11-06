@@ -2,6 +2,14 @@ const auth = require('./auth');
 const showModel = require('./models/show-model');
 const userModel = require('./models/user-model');
 
+const ensureAuthenticated = (req, res, next) => {
+	if (auth.isAuthenticated(req)) {
+		next();
+	} else {
+		res.status(401).send();
+	}
+}
+
 const routes = [
 	{
 		endpoint: '/api/shows',
@@ -71,6 +79,40 @@ const routes = [
 			})
 			.then(() => res.status(200).send())
 			.catch(err => next(err)),
+	}, {
+		endpoint: '/api/subscribe',
+		method: 'post',
+		auth: ensureAuthenticated,
+		action: (req, res, next) => showModel.subscribeTo({
+				showId: req.body.showId,
+				userId: req.user.id,
+			})
+			.then(() => res.status(200).send())
+			.catch(err => {
+				if (err.notFound) {
+					const message = `${req.body.showName} was not found.`;
+					return res.status(404).send({ message });
+				}
+
+				return next(err);
+			}),
+	}, {
+		endpoint: '/api/unsubscribe',
+		method: 'post',
+		auth: ensureAuthenticated,
+		action: (req, res, next) => showModel.unsubscribeFrom({
+				showId: req.body.showId,
+				userId: req.user.id,
+			})
+			.then(() => res.status(200).send())
+			.catch(err => {
+				if (err.notFound) {
+					const message = `${req.body.showName} was not found.`;
+					return res.status(404).send({ message });
+				}
+
+				return next(err);
+			}),
 	}, {
 		endpoint: '*',
 		method: 'get',

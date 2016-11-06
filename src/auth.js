@@ -23,4 +23,6 @@ module.exports = {
         return passport.session.apply(passport, arguments);
     },
     authenticate: passport.authenticate('local'),
+
+    isAuthenticated: req => req.isAuthenticated(req),
 };
