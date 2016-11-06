@@ -17,6 +17,8 @@ exports.getFilteredShows = function ({ genre, alphabet, limit = 12 }) {
 
 exports.getShow = ({ id }) => Show.findById(id).exec().then(show => show && show._doc);
 
+exports.findOnePopulateSubscribers = ({ name }) => Show.findOne({ name }).populate('subscribers').exec();
+
 exports.addShow = ({ seriesName }) => tvDbService
 	.searchSeriesByName({ seriesName })
 	.then(result => {

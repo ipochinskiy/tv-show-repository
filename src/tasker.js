@@ -4,6 +4,8 @@ const agenda = require('agenda')({
 const sugar = require('sugar');
 const nodemailer = require('nodemailer');
 
+const showModel = require('./models/show-model');
+
 const getMailText = (show, upcoming) => `
 ${show.name} starts in less than 2 hours on ${show.network}.
 
@@ -12,8 +14,7 @@ Episode ${upcoming.episodeNumber} Overview
 ${upcoming.overview}
 `;
 
-agenda.define('send email alert', (job, done) => {
-  Show.findOne({ name: job.attrs.data }).populate('subscribers').exec()
+agenda.define('send email alert', (job, done) => showModel.findOnePopulateSubscribers({ name: job.attrs.data })
   	.then(show => {
 	    const emails = show.subscribers.map(user => user.email);
 
@@ -39,8 +40,7 @@ agenda.define('send email alert', (job, done) => {
 			smtpTransport.close();
 			done();
 		});
-	});
-});
+	}));
 
 agenda.start();
 
