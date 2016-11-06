@@ -28,7 +28,11 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
 }));
 
 module.exports = {
-    initialize: passport.initialize,
-    session: passport.session,
+    initialize: function() {
+        return passport.initialize.apply(passport, arguments);
+    },
+    session: function() {
+        return passport.session.apply(passport, arguments);
+    },
     authenticate: passport.authenticate('local'),
 };
