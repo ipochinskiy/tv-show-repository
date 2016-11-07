@@ -5,11 +5,11 @@ const serverLib = require('./server');
 
 const auth = require('./auth');
 const tasker = require('./tasker');
-const responder = require('./responder');
+const respond = require('./responder');
 const crypter = require('./utils/crypter');
-const tvDbService = require('../services/tv-db-service');
+const tvDbService = require('./services/tv-db-service');
 
-const showModel = require('./models/show-model').initilize({ tvDbService, responder });
+const showModel = require('./models/show-model').initialize({ tvDbService, respond });
 const userModel = require('./models/user-model').initialize({ crypter });
 
 const routes = require('./routes').initialize({
@@ -17,7 +17,7 @@ const routes = require('./routes').initialize({
     tasker,
     showModel,
     userModel,
-    responder,
+    respond,
 });
 
 const port = process.env.PORT || 3000;

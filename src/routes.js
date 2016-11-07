@@ -1,9 +1,9 @@
-exports.initialize = function ({ auth, tasker, showModel, userModel, responder }) {
+exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) {
 	const ensureAuthenticated = (req, res, next) => {
 		if (auth.isAuthenticated(req)) {
 			next();
 		} else {
-			responder.unauthorized(res);
+			respond.unauthorized(res);
 		}
 	}
 
@@ -16,14 +16,14 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, responder }
 					genre: req.query.genre,
 					alphabet: req.query.alphabet
 				})
-				.then(shows => responder.ok(res, shows))
+				.then(shows => respond.ok(res, shows))
 				.catch(err => next(err)),
 		}, {
 			endpoint: '/api/shows/:id',
 			method: 'get',
 			action: (req, res, next) => showModel
 				.getShow({ id: req.params.id })
-				.then(show => responder.ok(res, show))
+				.then(show => respond.ok(res, show))
 				.catch(err => next(err)),
 		}, {
 			endpoint: '/api/shows',
@@ -37,19 +37,19 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, responder }
 				return showModel
 					.addShow({ seriesName })
 					.then(show => {
-						responder.ok(res);
+						respond.ok(res);
 
 						// TODO: replace the `sugar` package with custom implementation of the function below
 						const alertDate = Date.create(`Next ${show.airsDayOfWeek} at ${show.airsTime}`).rewind({ hour: 2});
 						tasker.scheduleJob(alertDate, show);
 					})
 					.catch(err => {
-						if (err.notFound) {
+						if (err[respond.STATUS.NOT_FOUND]) {
 							const message = `${req.body.showName} was not found.`;
-							return responder.notFound(res, message);
-						} else if (err.alreadyExists) {
+							return respond.notFound(res, message);
+						} else if (err[respond.STATUS.ALREADY_EXISTS]) {
 							const message = `${req.body.showName} already exists.`;
-							return responder.alreadyExists(res, message);
+							return respond.alreadyExists(res, message);
 						}
 
 						return next(err);
@@ -62,14 +62,14 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, responder }
 			action: (req, res, next) => {
 				// TODO: replace the user with something more secure
 				res.cookie('user', JSON.stringify(req.user));
-				responder.ok(res, req.user);
+				respond.ok(res, req.user);
 			},
 		}, {
 			endpoint: '/api/logout',
 			method: 'get',
 			action: (req, res, next) => {
 				req.logout();
-				responder.ok(res);
+				respond.ok(res);
 			},
 		}, {
 			endpoint: '/api/signup',
@@ -79,7 +79,7 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, responder }
 					email: req.body.email,
 					password: req.body.password
 				})
-				.then(() => responder.ok(res))
+				.then(() => respond.ok(res))
 				.catch(err => next(err)),
 		}, {
 			endpoint: '/api/subscribe',
@@ -89,11 +89,11 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, responder }
 					showId: req.body.showId,
 					userId: req.user.id,
 				})
-				.then(() => responder.ok(res))
+				.then(() => respond.ok(res))
 				.catch(err => {
 					if (err.notFound) {
 						const message = `${req.body.showName} was not found.`;
-						return responder.notFound(res, message);
+						return respond.notFound(res, message);
 					}
 
 					return next(err);
@@ -106,11 +106,11 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, responder }
 					showId: req.body.showId,
 					userId: req.user.id,
 				})
-				.then(() => responder.ok(res))
+				.then(() => respond.ok(res))
 				.catch(err => {
 					if (err.notFound) {
 						const message = `${req.body.showName} was not found.`;
-						return responder.notFound(res, message);
+						return respond.notFound(res, message);
 					}
 
 					return next(err);

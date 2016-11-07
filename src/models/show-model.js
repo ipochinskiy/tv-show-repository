@@ -1,6 +1,6 @@
 const Show = require('../schema/show-scheme');
 
-exports.initialize = function ({ tvDbService, responder }) {
+exports.initialize = function ({ tvDbService, respond }) {
 	return {
 		getFilteredShows: function ({ genre, alphabet, limit = 12 }) {
 			const query = Show.find();
@@ -28,7 +28,7 @@ exports.initialize = function ({ tvDbService, responder }) {
 				if (!series) {
 					// const err = { notFound: true };
 					// throw err;
-					throw responder.createHttpError(responder.STATUS.NOT_FOUND);
+					throw respond.createHttpError(respond.STATUS.NOT_FOUND);
 				}
 
 				return Array.isArray(series)
@@ -46,7 +46,7 @@ exports.initialize = function ({ tvDbService, responder }) {
 				if (!series) {
 					const err = { tvdbError: true };
 					throw err;
-					// throw responder.createHttpError(responder.STATUS.NOT_FOUND);
+					// throw respond.createHttpError(respond.STATUS.NOT_FOUND);
 				}
 
 				const show = {
@@ -85,7 +85,7 @@ exports.initialize = function ({ tvDbService, responder }) {
 					if (err) {
 						reject(err.code === 11000
 							// ? { alreadyExists: true }
-							? responder.createHttpError(responder.STATUS.ALREADY_EXISTS)
+							? respond.createHttpError(respond.STATUS.ALREADY_EXISTS)
 							: err);
 					}
 					resolve(show);
@@ -97,7 +97,7 @@ exports.initialize = function ({ tvDbService, responder }) {
 				if (!show) {
 					// const err = { notFound: true };
 					// throw err;
-					throw responder.createHttpError(responder.STATUS.NOT_FOUND);
+					throw respond.createHttpError(respond.STATUS.NOT_FOUND);
 				}
 
 				const alreadySubscribed = show.subscribers
@@ -115,7 +115,7 @@ exports.initialize = function ({ tvDbService, responder }) {
 				if (!show) {
 					// const err = { notFound: true };
 					// throw err;
-					throw responder.createHttpError(responder.STATUS.NOT_FOUND);
+					throw respond.createHttpError(respond.STATUS.NOT_FOUND);
 				}
 
 				const userIndex = show.subscribers.indexOf(userId);
