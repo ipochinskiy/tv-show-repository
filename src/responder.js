@@ -9,6 +9,10 @@ const http = {
 
 const respond = code => (res, body) => res.status(code).send(body || '');
 
+const createHttpError = ({ key }) => ({
+	[key]: true
+});
+
 module.exports = {
 	alreadyExists: respond(http.STATUS.ALREADY_EXISTS),
 	notFound: respond(http.STATUS.NOT_FOUND),
