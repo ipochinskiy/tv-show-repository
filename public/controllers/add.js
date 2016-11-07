@@ -16,7 +16,7 @@ angular.module('MyApp')
           $scope.showName = '';
           $scope.addForm.$setPristine();
           $alert({
-            content: response.data.message,
+            content: response.data,
             placement: 'top-right',
             type: 'danger',
             duration: 3
