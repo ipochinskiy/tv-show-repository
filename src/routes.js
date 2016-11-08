@@ -34,6 +34,7 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 					.replace(/ /g, '_')
 					.replace(/[^\w-]+/g, '');
 
+				// FIXME: by adding a show `am` or `ame` a buffer is shown to a user
 				return showModel
 					.addShow({ seriesName })
 					.then(show => {

@@ -46,9 +46,11 @@ exports.initialize = function ({ tvDbService, respond }) {
 				if (!series) {
 					const err = { tvdbError: true };
 					throw err;
+					// TODO: decide how to handle not-http errors
 					// throw respond.createHttpError(respond.STATUS.NOT_FOUND);
 				}
 
+				// FIXME: by adding a show `a` a stacktrace is shown to a client
 				const show = {
 					_id: series.id,
 					name: series.seriesname,
