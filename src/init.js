@@ -1,6 +1,5 @@
 const path = require('path');
 
-const sugar = require('sugar');
 const nodemailer = require('nodemailer');
 
 // TODO: replace with a config property

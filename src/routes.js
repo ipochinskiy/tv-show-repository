@@ -1,3 +1,5 @@
+const sugar = require('sugar');
+
 exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) {
 	const ensureAuthenticated = (req, res, next) => {
 		if (auth.isAuthenticated(req)) {
@@ -35,14 +37,14 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 					.replace(/[^\w-]+/g, '');
 
 				// FIXME: by adding a show `am` or `ame` a buffer is shown to a user
-				return showModel
-					.addShow({ seriesName })
+				return showModel.addShow({ seriesName })
 					.then(show => {
 						respond.ok(res);
 
-						// TODO: replace the `sugar` package with custom implementation of the function below
-						const alertDate = Date.create(`Next ${show.airsDayOfWeek} at ${show.airsTime}`).rewind({ hour: 2});
+						const nextAiring = sugar.Date.create(`Next ${show.airsDayOfWeek} at ${show.airsTime}`);
+						const alertDate = sugar.Date.rewind(nextAiring, '2 hours');
 						tasker.scheduleJob(alertDate, show);
+						return Promise.resolve({});
 					})
 					.catch(err => {
 						if (err[respond.STATUS.NOT_FOUND]) {
