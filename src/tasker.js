@@ -18,6 +18,10 @@ exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 		    const upcomingEpisode = show.episodes.filter(episode =>
 				new Date(episode.firstAired) > new Date())[0];
 
+			if (!upcomingEpisode) {
+				return Promise.resolve(done());
+			}
+
 			// TODO: replace with config properties
 		    const smtpTransport = nodemailer.createTransport('SMTP', {
 				service: 'SendGrid',
@@ -35,7 +39,7 @@ exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 			smtpTransport.sendMail(mailOptions, (error, response) => {
 				console.log(`Message sent: ${response.message}`);
 				smtpTransport.close();
-				done();
+				return Promise.resolve(done());
 			});
 		}));
 

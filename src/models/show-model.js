@@ -66,6 +66,7 @@ exports.initialize = function ({ tvDbService, respond }) {
 					runtime: series.runtime,
 					status: series.status,
 					posterLink: series.poster,
+
 					episodes: episodes.map(episode => ({
 						season: episode.seasonnumber,
 						episodeNumber: episode.episodenumber,
@@ -79,7 +80,7 @@ exports.initialize = function ({ tvDbService, respond }) {
 					.then(posterData => {
 						// TODO: save this data into a local file
 						show.posterData = posterData;
-						return new Show(show);
+						return Promise.resolve(new Show(show));
 					});
 			})
 			.then(show => new Promise((resolve, reject) => {
