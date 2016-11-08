@@ -39,11 +39,14 @@ exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 			});
 		}));
 
-	agenda.start();
 
 	agenda.on('start', job => console.log("Job %s starting", job.attrs.name));
 
 	agenda.on('complete', job => console.log("Job %s finished", job.attrs.name));
+
+	agenda.on('ready', function() {
+		agenda.start();
+	});
 
 	return {
 		// TODO: job name as a parameter
