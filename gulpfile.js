@@ -6,24 +6,24 @@ const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 const templateCache = require('gulp-angular-templatecache');
 
-gulp.task('sass', () => gulp
-  .src('public/stylesheets/**/*.scss')
-  .pipe(plumber())
-  .pipe(sass().on('error', sass.logError))
-  .pipe(csso())
-  .pipe(gulp.dest('public/stylesheets'))
+gulp.task('sass', () =>
+    gulp.src('public/stylesheets/**/*.scss')
+        .pipe(plumber())
+        .pipe(sass().on('error', sass.logError))
+        .pipe(csso())
+        .pipe(gulp.dest('public/stylesheets'))
 );
 
-gulp.task('compress', function() {
-  gulp.src([
-    'public/vendor/angular.js',
-    'public/vendor/*.js',
-    'public/app.js',
-    'public/services/*.js',
-    'public/controllers/*.js',
-    'public/filters/*.js',
-    'public/directives/*.js'
-  ])
+gulp.task('compress', () => {
+    gulp.src([
+        'public/vendor/angular.js',
+        'public/vendor/*.js',
+        'public/app.js',
+        'public/services/*.js',
+        'public/controllers/*.js',
+        'public/filters/*.js',
+        'public/directives/*.js'
+    ])
     .pipe(concat('app.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('public'));
