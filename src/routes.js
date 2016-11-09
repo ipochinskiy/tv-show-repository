@@ -41,9 +41,12 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 					.then(show => {
 						respond.ok(res);
 
-						const nextAiring = sugar.Date.create(`Next ${show.airsDayOfWeek} at ${show.airsTime}`);
-						const alertDate = sugar.Date.rewind(nextAiring, '2 hours');
-						tasker.scheduleJob(alertDate, show);
+						if (!showModel.isShowEnded(show)) {
+							const nextAiring = sugar.Date.create(`Next ${show.airsDayOfWeek} at ${show.airsTime}`);
+							const alertDate = sugar.Date.rewind(nextAiring, '2 hours');
+							tasker.scheduleJob(alertDate, show);
+						}
+
 						return Promise.resolve({});
 					})
 					.catch(err => {

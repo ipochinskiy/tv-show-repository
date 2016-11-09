@@ -128,5 +128,7 @@ exports.initialize = function ({ tvDbService, respond }) {
 
 				return show.save();
 			}),
+
+		isShowEnded: show => show.status === 'Ended',
 	}
 }
