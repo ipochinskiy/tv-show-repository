@@ -15,7 +15,7 @@ exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 		db: { address: dbUrl },
 	});
 
-	agenda.define(, (job, done) => showModel.findOnePopulateSubscribers({ name: job.attrs.data })
+	agenda.define(jobNames.nextAiring, (job, done) => showModel.findOnePopulateSubscribers({ name: job.attrs.data })
 	  	.then(show => {
 			if (showModel.isShowEnded(show)) {
 				agenda.cancel({ name: jobNames.nextAiring, data: show.name }, done);
