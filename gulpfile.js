@@ -40,4 +40,10 @@ gulp.task('watch', () => {
     ], [ 'compress' ]);
 });
 
-gulp.task('default', [ 'sass', 'compress', 'watch' ]);
+gulp.task('templates', () => {
+    gulp.src('public/views/**/*.html')
+        .pipe(templateCache({ root: 'views', module: 'MyApp' }))
+        .pipe(gulp.dest('public'));
+});
+
+gulp.task('default', [ 'sass', 'compress', 'templates', 'watch' ]);
