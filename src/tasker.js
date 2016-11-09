@@ -6,13 +6,21 @@ Episode ${upcoming.episodeNumber} Overview
 ${upcoming.overview}
 `;
 
+const jobNames = {
+	nextAiring: 'send next airing notification',
+}
+
 exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 	const agenda = require('agenda')({
 		db: { address: dbUrl },
 	});
 
-	agenda.define('send email alert', (job, done) => showModel.findOnePopulateSubscribers({ name: job.attrs.data })
+	agenda.define(, (job, done) => showModel.findOnePopulateSubscribers({ name: job.attrs.data })
 	  	.then(show => {
+			if (showModel.isShowEnded(show)) {
+				agenda.cancel({ name: jobNames.nextAiring, data: show.name }, done);
+			}
+
 		    const emails = show.subscribers.map(user => user.email);
 
 		    const upcomingEpisode = show.episodes.filter(episode =>
@@ -55,7 +63,7 @@ exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 	return {
 		// TODO: job name as a parameter
 		scheduleJob: (alertDate, show) => {
-		    return agenda.schedule(alertDate, 'send email alert', show.name).repeatEvery('1 week');
+		    return agenda.schedule(alertDate, jobNames.nextAiring, show.name).repeatEvery('1 week');
 		}
 	};
 }
