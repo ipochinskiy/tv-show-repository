@@ -37,8 +37,10 @@
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.2.0",
     "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
     "gulp-csso": "^2.0.0",
     "gulp-plumber": "^1.1.0",
-    "gulp-sass": "^2.3.2"
+    "gulp-sass": "^2.3.2",
+    "gulp-uglify": "^2.0.0"
   }
 }
