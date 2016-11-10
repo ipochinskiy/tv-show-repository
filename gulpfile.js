@@ -5,6 +5,7 @@ const csso = require('gulp-csso');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 const templateCache = require('gulp-angular-templatecache');
+const babel = require('gulp-babel');
 
 gulp.task('sass', () =>
     gulp.src('public/stylesheets/**/*.scss')
@@ -24,9 +25,13 @@ gulp.task('compress', () => {
         'public/filters/*.js',
         'public/directives/*.js'
     ])
-    .pipe(concat('app.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('public'));
+        .pipe(plumber())
+        .pipe(babel({
+            presets: [ 'es2015' ]
+        }))
+        .pipe(concat('app.min.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest('public'));
 });
 
 gulp.task('watch', () => {
@@ -42,8 +47,13 @@ gulp.task('watch', () => {
 
 gulp.task('templates', () => {
     gulp.src('public/views/**/*.html')
+        .pipe(plumber())
         .pipe(templateCache({ root: 'views', module: 'MyApp' }))
         .pipe(gulp.dest('public'));
 });
 
+// TODO: add sourcemaps
+// https://www.npmjs.com/package/gulp-babel
+
+// TODO: split it into `build` and `watch` tasks
 gulp.task('default', [ 'sass', 'compress', 'templates', 'watch' ]);
