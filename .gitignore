@@ -4,3 +4,5 @@ node_modules
 *.css
 npm-debug.log
 public/posters
+public/app.min.js
+public/templates.js
