@@ -23,7 +23,9 @@ exports.initialize = function ({ env = 'dev', publicPath, sessionSecret, auth })
 	app.use(auth.initialize());
 	app.use(auth.session());
 
-	app.use(express.static(publicPath));
+	// TODO: replace with config property
+	// 1 day
+	app.use(express.static(publicPath, { maxAge: 86400000 }));
 
 	return {
 		useRoutes: routesConfig => {
