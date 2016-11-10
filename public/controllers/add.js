@@ -1,8 +1,8 @@
 angular.module('MyApp')
   .controller('AddCtrl', ['$scope', '$alert', 'Show', function($scope, $alert, Show) {
-    $scope.addShow = () => {
+    $scope.addShow = function() {
       Show.save({ showName: $scope.showName },
-        () => {
+        function() {
           $scope.showName = '';
           $scope.addForm.$setPristine();
           $alert({
@@ -12,7 +12,7 @@ angular.module('MyApp')
             duration: 3
           });
         },
-        response => {
+        function(response) {
           $scope.showName = '';
           $scope.addForm.$setPristine();
           $alert({

@@ -17,12 +17,12 @@ angular.module('MyApp')
 
     $scope.shows = Show.query();
 
-    $scope.filterByGenre = genre => {
+    $scope.filterByGenre = function(genre) {
       $scope.shows = Show.query({ genre: genre });
       $scope.headingTitle = genre;
     };
 
-    $scope.filterByAlphabet = char => {
+    $scope.filterByAlphabet = function(char) {
       $scope.shows = Show.query({ alphabet: char });
       $scope.headingTitle = char;
     };
