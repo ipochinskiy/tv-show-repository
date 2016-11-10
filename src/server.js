@@ -5,9 +5,12 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const logger = require('morgan');
 const session = require('express-session');
+const compress = require('compression');
 
 exports.initialize = function ({ env = 'dev', publicPath, sessionSecret, auth }) {
 	const app = express();
+
+	app.use(compress());
 
 	app.use(logger(env));
 
