@@ -6,11 +6,22 @@ const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 const templateCache = require('gulp-angular-templatecache');
 const babel = require('gulp-babel');
+const uncss = require('gulp-uncss');
 
 gulp.task('sass', () =>
     gulp.src('public/stylesheets/**/*.scss')
         .pipe(plumber())
         .pipe(sass().on('error', sass.logError))
+        .pipe(uncss({
+            html: [
+                'public/index.html',
+                'public/views/add.html',
+                'public/views/detail.html',
+                'public/views/home.html',
+                'public/views/login.html',
+                'public/views/signup.html',
+            ],
+        }))
         .pipe(csso())
         .pipe(gulp.dest('public/stylesheets'))
 );
