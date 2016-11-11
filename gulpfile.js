@@ -16,7 +16,7 @@ gulp.task('clear', () => {
     ]);
 });
 
-gulp.task('static', () => {
+gulp.task('static', [ 'clear' ], () => {
     gulp.src([
         'assets/**',
         '!assets/stylesheets',
@@ -29,7 +29,7 @@ gulp.task('static', () => {
     .pipe(gulp.dest('public/'));
 });
 
-gulp.task('sass', () =>
+gulp.task('sass', [ 'clear' ], () =>
     gulp.src('assets/stylesheets/**/*.scss')
         .pipe(plumber())
         .pipe(sourcemaps.init())
@@ -49,7 +49,7 @@ gulp.task('sass', () =>
         .pipe(gulp.dest('public/'))
 );
 
-gulp.task('compress', () => {
+gulp.task('compress', [ 'clear' ], () => {
     gulp.src([
         'assets/vendor/angular.js',
         'assets/vendor/*.js',
@@ -67,7 +67,16 @@ gulp.task('compress', () => {
         .pipe(gulp.dest('public'));
 });
 
-gulp.task('watch', () => {
+gulp.task('templates', [ 'clear' ], () => {
+    gulp.src('ng/views/**/*.html')
+        .pipe(plumber())
+        .pipe(templateCache({ root: 'views', module: 'MyApp' }))
+        .pipe(gulp.dest('public'));
+});
+
+gulp.task('build', [ 'sass', 'static', 'compress', 'templates' ]);
+
+gulp.task('watch', [ 'build' ], () => {
     gulp.watch('assets/stylesheets/*.scss', [ 'sass' ]);
     gulp.watch('ng/views/**/*.html', [ 'templates' ]);
     gulp.watch([
@@ -75,12 +84,4 @@ gulp.task('watch', () => {
     ], [ 'compress' ]);
 });
 
-gulp.task('templates', () => {
-    gulp.src('ng/views/**/*.html')
-        .pipe(plumber())
-        .pipe(templateCache({ root: 'views', module: 'MyApp' }))
-        .pipe(gulp.dest('public'));
-});
-
-// TODO: split it into `build` and `watch` tasks
-gulp.task('default', [ 'clear', 'static', 'sass', 'compress', 'templates', 'watch' ]);
+gulp.task('default', [ 'watch' ]);
