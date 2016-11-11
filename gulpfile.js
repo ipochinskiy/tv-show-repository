@@ -11,6 +11,7 @@ const sourcemaps = require('gulp-sourcemaps');
 gulp.task('sass', () =>
     gulp.src('public/stylesheets/**/*.scss')
         .pipe(plumber())
+        .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
         .pipe(uncss({
             html: [
@@ -23,6 +24,7 @@ gulp.task('sass', () =>
             ],
         }))
         .pipe(csso())
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('public/stylesheets'))
 );
 
