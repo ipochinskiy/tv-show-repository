@@ -5,7 +5,6 @@ const csso = require('gulp-csso');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 const templateCache = require('gulp-angular-templatecache');
-const babel = require('gulp-babel');
 const uncss = require('gulp-uncss');
 const sourcemaps = require('gulp-sourcemaps');
 
@@ -38,9 +37,6 @@ gulp.task('compress', () => {
         'public/directives/*.js'
     ])
         .pipe(plumber())
-        .pipe(babel({
-            presets: [ 'es2015' ]
-        }))
         .pipe(sourcemaps.init())
         .pipe(concat('app.min.js'))
         .pipe(uglify())
