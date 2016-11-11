@@ -1,12 +1,33 @@
-const gulp = require('gulp');
-const sass = require('gulp-sass');
-const plumber = require('gulp-plumber');
-const csso = require('gulp-csso');
-const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
-const templateCache = require('gulp-angular-templatecache');
-const uncss = require('gulp-uncss');
+const csso = require('gulp-csso');
+const del = require('del');
+const gulp = require('gulp');
+const plumber = require('gulp-plumber');
+const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
+const templateCache = require('gulp-angular-templatecache');
+const uglify = require('gulp-uglify');
+const uncss = require('gulp-uncss');
+
+gulp.task('clear', () => {
+    del([
+        'public/**/*',
+        '!public'
+    ]);
+});
+
+gulp.task('static', () => {
+    gulp.src([
+        'assets/**',
+        '!assets/stylesheets',
+        '!assets/stylesheets/**',
+        '!assets/vendor',
+        '!assets/vendor/**',
+
+        'ng/index.html'
+    ])
+    .pipe(gulp.dest('public/'));
+});
 
 gulp.task('sass', () =>
     gulp.src('assets/stylesheets/**/*.scss')
@@ -62,4 +83,4 @@ gulp.task('templates', () => {
 });
 
 // TODO: split it into `build` and `watch` tasks
-gulp.task('default', [ 'sass', 'compress', 'templates', 'watch' ]);
+gulp.task('default', [ 'clear', 'static', 'sass', 'compress', 'templates', 'watch' ]);
