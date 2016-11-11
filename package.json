@@ -8,7 +8,7 @@
     "server": "node --harmony src/init",
     "start": "npm run build && npm run server",
     "lint": "eslint src",
-    "watch:frontend": "gulp watch",
+    "watch:frontend": "gulp watch"
   },
   "dependencies": {
     "agenda": "^0.9.0",
