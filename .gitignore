@@ -4,6 +4,4 @@ node_modules
 *.css
 *.map
 npm-debug.log
-public/posters
-public/app.min.js
-public/templates.js
+public

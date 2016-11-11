@@ -9,34 +9,34 @@ const uncss = require('gulp-uncss');
 const sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('sass', () =>
-    gulp.src('public/stylesheets/**/*.scss')
+    gulp.src('assets/stylesheets/**/*.scss')
         .pipe(plumber())
         .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
         .pipe(uncss({
             html: [
-                'public/index.html',
-                'public/views/add.html',
-                'public/views/detail.html',
-                'public/views/home.html',
-                'public/views/login.html',
-                'public/views/signup.html',
+                'ng/index.html',
+                'ng/views/add.html',
+                'ng/views/detail.html',
+                'ng/views/home.html',
+                'ng/views/login.html',
+                'ng/views/signup.html',
             ],
         }))
         .pipe(csso())
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('public/stylesheets'))
+        .pipe(gulp.dest('public/'))
 );
 
 gulp.task('compress', () => {
     gulp.src([
-        'public/vendor/angular.js',
-        'public/vendor/*.js',
-        'public/app.js',
-        'public/services/*.js',
-        'public/controllers/*.js',
-        'public/filters/*.js',
-        'public/directives/*.js'
+        'assets/vendor/angular.js',
+        'assets/vendor/*.js',
+        'ng/app.js',
+        'ng/services/*.js',
+        'ng/controllers/*.js',
+        'ng/filters/*.js',
+        'ng/directives/*.js'
     ])
         .pipe(plumber())
         .pipe(sourcemaps.init())
@@ -47,18 +47,15 @@ gulp.task('compress', () => {
 });
 
 gulp.task('watch', () => {
-    gulp.watch('public/stylesheets/*.scss', [ 'sass' ]);
-    gulp.watch('public/views/**/*.html', [ 'templates' ]);
+    gulp.watch('assets/stylesheets/*.scss', [ 'sass' ]);
+    gulp.watch('ng/views/**/*.html', [ 'templates' ]);
     gulp.watch([
-        'public/**/*.js',
-        '!public/app.min.js',
-        '!public/templates.js',
-        '!public/vendor'
+        'ng/**/*.js',
     ], [ 'compress' ]);
 });
 
 gulp.task('templates', () => {
-    gulp.src('public/views/**/*.html')
+    gulp.src('ng/views/**/*.html')
         .pipe(plumber())
         .pipe(templateCache({ root: 'views', module: 'MyApp' }))
         .pipe(gulp.dest('public'));
