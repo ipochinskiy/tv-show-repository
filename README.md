@@ -1,5 +1,7 @@
 # TV Show Tracker
 
+![](http://sahatyalkabov.com/images/projects/showtrackr.png)
+
 A small project to try out AngularJS and some other packages/libraries.
 
 It's a client-server application for tracking TV series which are imported from [The TVDB](http://thetvdb.com/).
