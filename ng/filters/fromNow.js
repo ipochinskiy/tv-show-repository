@@ -1,6 +1,2 @@
-angular.module('MyApp').
-  filter('fromNow', function() {
-      return function(date) {
-          return moment(date).fromNow();
-      };
-  });
+angular.module('MyApp')
+	.filter('fromNow', () => date => moment(date).fromNow());

@@ -8,11 +8,13 @@ exports.initialize = (userModel) => {
 		.then(user => done(null, user))
 		.catch(err => done(err)));
 
-	passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-		userModel.findOne({ email, password })
+	const strategy = new LocalStrategy(
+		{ usernameField: 'email' },
+		(email, password, done) => userModel.findOne({ email, password })
 			.then(user => done(null, user || false))
 			.catch(err => done(err))
-	}));
+	);
+	passport.use(strategy);
 
 	return {
 		initialize(...args) {
@@ -26,4 +28,4 @@ exports.initialize = (userModel) => {
 
 		isAuthenticated: req => req.isAuthenticated(req),
 	};
-}
+};
