@@ -1,13 +1,13 @@
 const sugar = require('sugar');
 
-exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) {
+exports.initialize = ({ auth, tasker, showModel, userModel, respond }) => {
 	const ensureAuthenticated = (req, res, next) => {
 		if (auth.isAuthenticated(req)) {
 			next();
 		} else {
 			respond.unauthorized(res);
 		}
-	}
+	};
 
 	return [
 		{
@@ -16,7 +16,7 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 			action: (req, res, next) => showModel
 				.getFilteredShows({
 					genre: req.query.genre,
-					alphabet: req.query.alphabet
+					alphabet: req.query.alphabet,
 				})
 				.then(shows => respond.ok(res, shows))
 				.catch(err => next(err)),
@@ -42,7 +42,8 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 						respond.ok(res);
 
 						if (!showModel.isShowEnded(show)) {
-							const nextAiring = sugar.Date.create(`Next ${show.airsDayOfWeek} at ${show.airsTime}`);
+							const message = `Next ${show.airsDayOfWeek} at ${show.airsTime}`;
+							const nextAiring = sugar.Date.create(message);
 							const alertDate = sugar.Date.rewind(nextAiring, '2 hours');
 							tasker.scheduleJob(alertDate, show);
 						}
@@ -65,7 +66,7 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 			endpoint: '/api/login',
 			method: 'post',
 			auth: auth.authenticate,
-			action: (req, res, next) => {
+			action: (req, res) => {
 				// TODO: replace the user with something more secure
 				res.cookie('user', JSON.stringify(req.user));
 				respond.ok(res, req.user);
@@ -73,7 +74,7 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 		}, {
 			endpoint: '/api/logout',
 			method: 'get',
-			action: (req, res, next) => {
+			action: (req, res) => {
 				req.logout();
 				respond.ok(res);
 			},
@@ -83,7 +84,7 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 			action: (req, res, next) => userModel
 				.createUser({
 					email: req.body.email,
-					password: req.body.password
+					password: req.body.password,
 				})
 				.then(() => respond.ok(res))
 				.catch(err => next(err)),
@@ -92,39 +93,39 @@ exports.initialize = function ({ auth, tasker, showModel, userModel, respond }) 
 			method: 'post',
 			auth: ensureAuthenticated,
 			action: (req, res, next) => showModel.subscribeTo({
-					showId: req.body.showId,
-					userId: req.user.id,
-				})
-				.then(() => respond.ok(res))
-				.catch(err => {
-					if (err.notFound) {
-						const message = `${req.body.showName} was not found.`;
-						return respond.notFound(res, message);
-					}
+				showId: req.body.showId,
+				userId: req.user.id,
+			})
+			.then(() => respond.ok(res))
+			.catch(err => {
+				if (err.notFound) {
+					const message = `${req.body.showName} was not found.`;
+					return respond.notFound(res, message);
+				}
 
-					return next(err);
-				}),
+				return next(err);
+			}),
 		}, {
 			endpoint: '/api/unsubscribe',
 			method: 'post',
 			auth: ensureAuthenticated,
 			action: (req, res, next) => showModel.unsubscribeFrom({
-					showId: req.body.showId,
-					userId: req.user.id,
-				})
-				.then(() => respond.ok(res))
-				.catch(err => {
-					if (err.notFound) {
-						const message = `${req.body.showName} was not found.`;
-						return respond.notFound(res, message);
-					}
+				showId: req.body.showId,
+				userId: req.user.id,
+			})
+			.then(() => respond.ok(res))
+			.catch(err => {
+				if (err.notFound) {
+					const message = `${req.body.showName} was not found.`;
+					return respond.notFound(res, message);
+				}
 
-					return next(err);
-				}),
+				return next(err);
+			}),
 		}, {
 			endpoint: '*',
 			method: 'get',
 			action: (req, res) => res.redirect(`/#${req.originalUrl}`),
 		},
 	];
-}
+};

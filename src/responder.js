@@ -3,7 +3,7 @@ const STATUS = {
 	NOT_FOUND: '404',
 	OK: '200',
 	UNAUTHORIZED: '401',
-}
+};
 
 const respond = code => (res, body) => res.status(code).send(body || '');
 
@@ -20,4 +20,4 @@ module.exports = {
 	notFound: respond(STATUS.NOT_FOUND),
 	ok: respond(STATUS.OK),
 	unauthorized: respond(STATUS.UNAUTHORIZED),
-}
+};

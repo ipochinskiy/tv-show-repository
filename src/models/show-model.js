@@ -1,134 +1,133 @@
 const Show = require('../schema/show-scheme');
 
-exports.initialize = function ({ tvDbService, respond }) {
-	return {
-		getFilteredShows: function ({ genre, alphabet, limit = 12 }) {
-			const query = Show.find();
+exports.initialize = ({ tvDbService, respond }) => ({
+	getFilteredShows: ({ genre, alphabet, limit = 12 }) => {
+		const query = Show.find();
 
-			if (genre) {
-				query.where({ genre });
-			} else if (alphabet) {
-				query.where({ name: new RegExp(`^[${alphabet}]`, 'i') });
-			} else {
-				query.limit(limit);
+		if (genre) {
+			query.where({ genre });
+		} else if (alphabet) {
+			query.where({ name: new RegExp(`^[${alphabet}]`, 'i') });
+		} else {
+			query.limit(limit);
+		}
+
+		return query.exec();
+	},
+
+	getShow: ({ id }) => Show.findById(id).exec()
+		.then(show => show && show._doc), // eslint-disable-line no-underscore-dangle
+
+	findOnePopulateSubscribers: ({ name }) => Show.findOne({ name }).populate('subscribers').exec(),
+
+	addShow: ({ seriesName }) => tvDbService
+		.searchSeriesByName({ seriesName })
+		.then(result => {
+			const series = result && result.data && result.data.series;
+
+			if (!series) {
+				// const err = { notFound: true };
+				// throw err;
+				throw respond.createHttpError(respond.STATUS.NOT_FOUND);
 			}
 
-			return query.exec();
-		},
+			return Array.isArray(series)
+			// FIXME: if a series has no poster, a request to banners endpoint
+			//        will return 403 with unfriendly message (i.g. "wow")
+				? series[0].seriesid
+				: series.seriesid;
+		})
+		.then(seriesId => tvDbService.getSeriesInfo({ seriesId }))
+		.then(result => {
+			const data = result && result.data;
+			const series = data.series;
+			const episodes = [].concat(data.episode);
 
-		getShow: ({ id }) => Show.findById(id).exec().then(show => show && show._doc),
+			if (!series) {
+				const err = { tvdbError: true };
+				throw err;
+				// TODO: decide how to handle not-http errors
+				// throw respond.createHttpError(respond.STATUS.NOT_FOUND);
+			}
 
-		findOnePopulateSubscribers: ({ name }) => Show.findOne({ name }).populate('subscribers').exec(),
+			// FIXME: by adding a show `a` a stacktrace is shown to a client
+			const show = {
+				_id: series.id,
+				name: series.seriesname,
+				airsDayOfWeek: series.airs_dayofweek,
+				airsTime: series.airs_time,
+				firstAired: series.firstaired,
+				genre: series.genre.split('|').filter(chunk => !!chunk),
 
-		addShow: ({ seriesName }) => tvDbService
-			.searchSeriesByName({ seriesName })
-			.then(result => {
-				const series = result && result.data && result.data.series;
+				network: series.network,
+				overview: series.overview,
+				rating: series.rating,
+				ratingCount: series.ratingcount,
+				runtime: series.runtime,
+				status: series.status,
+				posterLink: series.poster,
 
-				if (!series) {
-					// const err = { notFound: true };
-					// throw err;
-					throw respond.createHttpError(respond.STATUS.NOT_FOUND);
-				}
+				episodes: episodes.map(episode => ({
+					season: episode.seasonnumber,
+					episodeNumber: episode.episodenumber,
+					episodeName: episode.episodename,
+					firstAired: episode.firstaired,
+					overview: episode.overview,
+				})),
+			};
 
-				return Array.isArray(series)
-				// FIXME: if a series has no poster, a request to banners endpoint
-				//        will return 403 with unfriendly message (i.g. "wow")
-					? series[0].seriesid
-					: series.seriesid;
-			})
-			.then(seriesId => tvDbService.getSeriesInfo({ seriesId }))
-			.then(result => {
-				const data = result && result.data;
-				const series = data.series;
-				const episodes = [].concat(data.episode);
-
-				if (!series) {
-					const err = { tvdbError: true };
-					throw err;
-					// TODO: decide how to handle not-http errors
-					// throw respond.createHttpError(respond.STATUS.NOT_FOUND);
-				}
-
-				// FIXME: by adding a show `a` a stacktrace is shown to a client
-				const show = {
-					_id: series.id,
-					name: series.seriesname,
-					airsDayOfWeek: series.airs_dayofweek,
-					airsTime: series.airs_time,
-					firstAired: series.firstaired,
-					genre: series.genre.split('|').filter(chunk => !!chunk),
-
-					network: series.network,
-					overview: series.overview,
-					rating: series.rating,
-					ratingCount: series.ratingcount,
-					runtime: series.runtime,
-					status: series.status,
-					posterLink: series.poster,
-
-					episodes: episodes.map(episode => ({
-						season: episode.seasonnumber,
-						episodeNumber: episode.episodenumber,
-						episodeName: episode.episodename,
-						firstAired: episode.firstaired,
-						overview: episode.overview,
-					})),
-				};
-
-				return tvDbService.loadPoster({ poster: show.posterLink })
-					.then(posterData => {
-						// TODO: save this data into a local file
-						show.posterData = posterData;
-						return Promise.resolve(new Show(show));
-					});
-			})
-			.then(show => new Promise((resolve, reject) => {
-				show.save(err => {
-					if (err) {
-						reject(err.code === 11000
-							// ? { alreadyExists: true }
-							? respond.createHttpError(respond.STATUS.ALREADY_EXISTS)
-							: err);
-					}
-					resolve(show);
+			return tvDbService.loadPoster({ poster: show.posterLink })
+				.then(posterData => {
+					// TODO: save this data into a local file
+					show.posterData = posterData;
+					return Promise.resolve(new Show(show));
 				});
-			})),
-
-		subscribeTo: ({ showId, userId }) => Show.findById(showId).exec()
-			.then(show => {
-				if (!show) {
-					// const err = { notFound: true };
-					// throw err;
-					throw respond.createHttpError(respond.STATUS.NOT_FOUND);
+		})
+		.then(show => new Promise((resolve, reject) => {
+			show.save(err => {
+				if (err) {
+					reject(err.code === 11000
+						// ? { alreadyExists: true }
+						? respond.createHttpError(respond.STATUS.ALREADY_EXISTS)
+						: err);
 				}
+				resolve(show);
+			});
+		})),
 
-				const alreadySubscribed = show.subscribers
-					.filter(id => id === userId).length > 0;
+	subscribeTo: ({ showId, userId }) => Show.findById(showId).exec()
+		.then(show => {
+			if (!show) {
+				// const err = { notFound: true };
+				// throw err;
+				throw respond.createHttpError(respond.STATUS.NOT_FOUND);
+			}
 
-				if (!alreadySubscribed) {
-					show.subscribers.push(userId);
-				}
+			const alreadySubscribed = show.subscribers
+				.filter(id => id === userId).length > 0;
 
-				return show.save();
-			}),
+			if (!alreadySubscribed) {
+				show.subscribers.push(userId);
+			}
 
-		unsubscribeFrom: ({ showId, userId }) => Show.findById(showId).exec()
-			.then(show => {
-				if (!show) {
-					// const err = { notFound: true };
-					// throw err;
-					throw respond.createHttpError(respond.STATUS.NOT_FOUND);
-				}
+			return show.save();
+		}),
 
-				const userIndex = show.subscribers.indexOf(userId);
-				if (userIndex > -1) {
-					show.subscribers.splice(userIndex, 1);
-				}
+	unsubscribeFrom: ({ showId, userId }) => Show.findById(showId).exec()
+		.then(show => {
+			if (!show) {
+				// const err = { notFound: true };
+				// throw err;
+				throw respond.createHttpError(respond.STATUS.NOT_FOUND);
+			}
 
-				return show.save();
-			}),
+			const userIndex = show.subscribers.indexOf(userId);
+			if (userIndex > -1) {
+				show.subscribers.splice(userIndex, 1);
+			}
 
-		isShowEnded: show => show.status === 'Ended',
-	}
-}
+			return show.save();
+		}),
+
+	isShowEnded: show => show.status === 'Ended',
+});

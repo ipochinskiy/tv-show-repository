@@ -1,5 +1,3 @@
-const path = require('path');
-
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
@@ -7,7 +5,7 @@ const logger = require('morgan');
 const session = require('express-session');
 const compress = require('compression');
 
-exports.initialize = function ({ env = 'dev', publicPath, sessionSecret, auth }) {
+exports.initialize = ({ env = 'dev', publicPath, sessionSecret, auth }) => {
 	const app = express();
 
 	app.use(compress());
@@ -43,9 +41,7 @@ exports.initialize = function ({ env = 'dev', publicPath, sessionSecret, auth })
 			});
 		},
 
-		start: function(port = 3000) {
-			app.listen(port, () =>
-				console.log(`Express server listening on port ${port}`));
-		},
-	}
-}
+		start: (port = 3000) => app.listen(port, () =>
+			console.log(`Express server listening on port ${port}`)),
+	};
+};
