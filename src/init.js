@@ -9,7 +9,6 @@ const database = require('./database');
 
 const serverLib = require('./server');
 
-const auth = require('./auth');
 const respond = require('./responder');
 const crypter = require('./utils/crypter');
 const tvDbService = require('./services/tv-db-service');
@@ -20,6 +19,8 @@ const showModel = require('./models/show-model').initialize({ tvDbService, respo
 const userModel = require('./models/user-model').initialize({ crypter });
 
 const tasker = require('./tasker').initialize({ dbUrl, nodemailer, showModel });
+
+const auth = require('./auth').initialize(userModel);
 
 const routes = require('./routes').initialize({
 	auth,
