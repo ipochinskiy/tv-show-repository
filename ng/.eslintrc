@@ -9,6 +9,12 @@
   },
   "rules": {
   	"no-console": 0,
+    "func-names": 0,
+    "no-param-reassign": 0,
     "indent": [ "error", "tab" ],
   },
+  "globals": {
+    "angular": true,
+  },
 }
+

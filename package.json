@@ -7,7 +7,7 @@
     "build": "gulp build",
     "server": "node --harmony src/init",
     "start": "npm run build && npm run server",
-    "lint": "eslint src",
+    "lint": "eslint src ng",
     "watch:frontend": "gulp watch"
   },
   "dependencies": {
