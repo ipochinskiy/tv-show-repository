@@ -6,7 +6,6 @@ const plumber = require('gulp-plumber');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const templateCache = require('gulp-angular-templatecache');
-const uglify = require('gulp-uglify');
 const uncss = require('gulp-uncss');
 
 gulp.task('clear', () => {
@@ -62,7 +61,6 @@ gulp.task('compress', [ 'clear' ], () => {
         .pipe(plumber())
         .pipe(sourcemaps.init())
         .pipe(concat('app.min.js'))
-        .pipe(uglify())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('public'));
 });

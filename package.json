@@ -45,7 +45,6 @@
     "gulp-plumber": "^1.1.0",
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^2.2.0",
-    "gulp-uglify": "^2.0.0",
     "gulp-uncss": "^1.0.6"
   }
 }
