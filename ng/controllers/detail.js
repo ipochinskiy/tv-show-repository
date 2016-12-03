@@ -1,8 +1,11 @@
 angular.module('MyApp')
 	.controller('DetailCtrl', ['$scope', '$rootScope', '$routeParams', 'Show', 'Subscription',
 		function ($scope, $rootScope, $routeParams, Show, Subscription) {
+			NProgress.start();
+
 			Show.get({ _id: $routeParams.id }, (show) => {
 				$scope.show = show;
+				NProgress.done();
 
 				$scope.isSubscribed = function () {
 					const id = $rootScope.currentUser._id;  // eslint-disable-line no-underscore-dangle

@@ -14,15 +14,21 @@ angular.module('MyApp')
 
 		$scope.headingTitle = 'Top 12 Shows';
 
+		NProgress.start();
 		$scope.shows = Show.query();
+		NProgress.done();
 
 		$scope.filterByGenre = (genre) => {
+			NProgress.start();
 			$scope.shows = Show.query({ genre });
 			$scope.headingTitle = genre;
+			NProgress.done();
 		};
 
 		$scope.filterByAlphabet = (char) => {
+			NProgress.start();
 			$scope.shows = Show.query({ alphabet: char });
 			$scope.headingTitle = char;
+			NProgress.done();
 		};
 	}]);
