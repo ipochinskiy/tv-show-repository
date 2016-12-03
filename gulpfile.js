@@ -20,7 +20,7 @@ gulp.task('static', [ 'clear' ], () => {
     gulp.src([
         'assets/**',
         '!assets/stylesheets',
-        '!assets/stylesheets/**',
+        '!assets/stylesheets/*.scss',
         '!assets/vendor',
         '!assets/vendor/**',
 
@@ -46,7 +46,7 @@ gulp.task('sass', [ 'clear' ], () =>
         }))
         .pipe(csso())
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('public/'))
+        .pipe(gulp.dest('public/stylesheets'))
 );
 
 gulp.task('compress', [ 'clear' ], () => {
