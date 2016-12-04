@@ -16,6 +16,7 @@
   "globals": {
     "angular": true,
     "moment": true,
+    "NProgress": true,
   },
 }
 
