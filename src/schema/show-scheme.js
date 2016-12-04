@@ -14,6 +14,7 @@ const showSchema = new mongoose.Schema({
 	status: String,
 	posterLink: String,
 	posterData: String,
+	imdbId: String,
 	subscribers: [{
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',

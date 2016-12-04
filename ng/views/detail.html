@@ -21,8 +21,10 @@
           </div>
         </div>
         <div class="media-body">
-          <h2 class="media-heading">
-            {{show.name}}
+          <h2 class="media-heading">{{show.name}}
+            <a href="http://www.imdb.com/title/{{show.imdbId}}">
+              <img src="/imdb.jpg" width="29"/>
+            </a>
             <span class="pull-right text-danger">{{show.rating}}</span>
           </h2>
           <h4 ng-show="show.status === 'Continuing'">
@@ -47,7 +49,7 @@
     <div class="panel-heading">
       <span class="glyphicon glyphicon-play"></span> Episodes
     </div>
-    <div class="panel-body">
+    <div class="panel-body" highlight-episode>
       <div class="episode" ng-repeat="episode in show.episodes">
         <h4>{{episode.episodeName}}
         <small>Season {{episode.season}}, Episode {{episode.episodeNumber}}</small>

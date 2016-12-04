@@ -66,6 +66,7 @@ exports.initialize = ({ tvDbService, respond }) => ({
 				runtime: series.runtime,
 				status: series.status,
 				posterLink: series.poster,
+				imdbId: series.imdb_id,
 
 				episodes: episodes.map(episode => ({
 					season: episode.seasonnumber,
