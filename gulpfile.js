@@ -19,6 +19,7 @@ gulp.task('static', [ 'clear' ], () => {
     gulp.src([
         'assets/**',
         '!assets/stylesheets',
+        '!assets/stylesheets/*.css',
         '!assets/stylesheets/*.scss',
         '!assets/vendor',
         '!assets/vendor/**',
@@ -48,6 +49,13 @@ gulp.task('sass', [ 'clear' ], () =>
         .pipe(gulp.dest('public/stylesheets'))
 );
 
+gulp.task('css', [ 'clear' ], () =>
+    gulp.src('assets/stylesheets/**/*.css')
+        .pipe(plumber())
+        .pipe(csso())
+        .pipe(gulp.dest('public/stylesheets'))
+);
+
 gulp.task('compress', [ 'clear' ], () => {
     gulp.src([
         'assets/vendor/angular.js',
@@ -72,10 +80,11 @@ gulp.task('templates', [ 'clear' ], () => {
         .pipe(gulp.dest('public'));
 });
 
-gulp.task('build', [ 'sass', 'static', 'compress', 'templates' ]);
+gulp.task('build', [ 'sass', 'css', 'static', 'compress', 'templates' ]);
 
 gulp.task('watch', [ 'build' ], () => {
     gulp.watch('assets/stylesheets/*.scss', [ 'sass' ]);
+    gulp.watch('assets/stylesheets/*.css', [ 'css' ]);
     gulp.watch('ng/views/**/*.html', [ 'templates' ]);
     gulp.watch([
         'ng/**/*.js',
