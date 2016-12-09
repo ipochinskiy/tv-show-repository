@@ -6,7 +6,6 @@ const plumber = require('gulp-plumber');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const templateCache = require('gulp-angular-templatecache');
-const uncss = require('gulp-uncss');
 
 gulp.task('clear', () => {
     del([
@@ -34,16 +33,6 @@ gulp.task('sass', [ 'clear' ], () =>
         .pipe(plumber())
         .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
-        .pipe(uncss({
-            html: [
-                'ng/index.html',
-                'ng/views/add.html',
-                'ng/views/detail.html',
-                'ng/views/home.html',
-                'ng/views/login.html',
-                'ng/views/signup.html',
-            ],
-        }))
         .pipe(csso())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('public/stylesheets'))
