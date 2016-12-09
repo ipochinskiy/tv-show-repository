@@ -3,6 +3,7 @@
     <div class="panel-heading">Add TV Show</div>
     <div class="panel-body">
       <form class="form" method="post" ng-submit="addShow()" name="addForm">
+        <label class="control-label">Name</label>
         <div class="form-group" ng-class="{ 'has-success' : addForm.showName.$valid && addForm.showName.$dirty, 'has-error' : addForm.showName.$invalid && addForm.showName.$dirty }">
           <input class="form-control" type="text" name="showName" ng-model="showName" placeholder="Enter TV show name" required autofocus>
           <div class="help-block text-danger" ng-if="addForm.showName.$dirty" ng-messages="addForm.showName.$error">
