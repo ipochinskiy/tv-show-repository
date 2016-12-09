@@ -13,7 +13,7 @@ gulp.task('clear', () => {
     rimraf.sync('./public');
 });
 
-gulp.task('static', [ 'clear' ], () => {
+gulp.task('static', [], () => {
     gulp.src([
         'assets/**',
         '!assets/stylesheets',
@@ -27,7 +27,7 @@ gulp.task('static', [ 'clear' ], () => {
     .pipe(gulp.dest('public/'));
 });
 
-gulp.task('sass', [ 'clear' ], () =>
+gulp.task('sass', [], () =>
     gulp.src('assets/stylesheets/**/*.scss')
         .pipe(plumber())
         .pipe(sourcemaps.init())
@@ -37,14 +37,14 @@ gulp.task('sass', [ 'clear' ], () =>
         .pipe(gulp.dest('public/stylesheets'))
 );
 
-gulp.task('css', [ 'clear' ], () =>
+gulp.task('css', [], () =>
     gulp.src('assets/stylesheets/**/*.css')
         .pipe(plumber())
         .pipe(csso())
         .pipe(gulp.dest('public/stylesheets'))
 );
 
-gulp.task('compress', [ 'clear' ], () => {
+gulp.task('compress', [], () => {
     gulp.src([
         'assets/vendor/angular.js',
         'assets/vendor/*.js',
@@ -61,22 +61,22 @@ gulp.task('compress', [ 'clear' ], () => {
         .pipe(gulp.dest('public'));
 });
 
-gulp.task('templates', [ 'clear' ], () => {
+gulp.task('templates', [], () => {
     gulp.src('ng/views/**/*.html')
         .pipe(plumber())
         .pipe(templateCache({ root: 'views', module: 'MyApp' }))
         .pipe(gulp.dest('public'));
 });
 
-gulp.task('build', [ 'sass', 'css', 'static', 'compress', 'templates' ]);
+gulp.task('copyPublic', [ 'sass', 'css', 'static', 'compress', 'templates' ]);
+
+gulp.task('build', [ 'clear', 'copyPublic' ]);
 
 gulp.task('watch', [ 'build' ], () => {
     gulp.watch('assets/stylesheets/*.scss', [ 'sass' ]);
     gulp.watch('assets/stylesheets/*.css', [ 'css' ]);
     gulp.watch('ng/views/**/*.html', [ 'templates' ]);
-    gulp.watch([
-        'ng/**/*.js',
-    ], [ 'compress' ]);
+    gulp.watch('ng/**/*.js', [ 'compress' ]);
 });
 
 gulp.task('default', [ 'watch' ]);
