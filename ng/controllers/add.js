@@ -21,6 +21,7 @@ angular.module('MyApp')
 						type: 'danger',
 						duration: 3,
 					});
-				});
+				}
+			);
 		};
 	}]);
