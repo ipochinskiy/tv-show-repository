@@ -1,11 +1,10 @@
-angular.module('MyApp')
-	.controller('SignupCtrl', ['$scope', 'Auth', function ($scope, Auth) {
-		$scope.signup = function () {
-			Auth.signup({
-				email: $scope.email,
-				password: $scope.password,
-			});
-		};
+angular.module('MyApp').controller('SignupCtrl', function ($scope, Auth) {
+	$scope.signup = function () {
+		Auth.signup({
+			email: $scope.email,
+			password: $scope.password,
+		});
+	};
 
-		$scope.pageClass = 'fadeZoom';
-	}]);
+	$scope.pageClass = 'fadeZoom';
+});
