@@ -296,6 +296,15 @@ em {
   animation: fadeIn 0.4s;
 }
 
+.fadeZoomFadeDown.ng-enter {
+  @extend .fadeZoom.ng-enter;
+}
+
+.fadeZoomFadeDown.ng-leave {
+  -webkit-animation: fadeOutDown 0.6s;
+  animation: fadeOutDown 0.6s;
+}
+
 .fadeZoom.ng-enter {
   -webkit-animation-name: fadeIn, zoomIn;
   -webkit-animation-duration: 0.6s, 0.2s;

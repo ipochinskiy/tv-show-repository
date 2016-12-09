@@ -6,9 +6,9 @@ angular.module('MyApp')
 					$scope.showName = '';
 					$scope.addForm.$setPristine();
 					$alert({
+					animation: 'fadeZoomFadeDown',
 						content: 'TV show has been added.',
-						placement: 'top-right',
-						type: 'success',
+					type: 'material',
 						duration: 3,
 					});
 				},
@@ -16,9 +16,9 @@ angular.module('MyApp')
 					$scope.showName = '';
 					$scope.addForm.$setPristine();
 					$alert({
+					animation: 'fadeZoomFadeDown',
 						content: response.data,
-						placement: 'top-right',
-						type: 'danger',
+					type: 'material',
 						duration: 3,
 					});
 				}
