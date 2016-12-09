@@ -7,11 +7,10 @@ const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const templateCache = require('gulp-angular-templatecache');
 
+const rimraf = require('rimraf');
+
 gulp.task('clear', () => {
-    del([
-        'public/**/*',
-        '!public'
-    ]);
+    rimraf.sync('./public');
 });
 
 gulp.task('static', [ 'clear' ], () => {
