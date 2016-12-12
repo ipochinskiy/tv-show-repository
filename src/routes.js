@@ -2,11 +2,17 @@ const sugar = require('sugar');
 
 exports.initialize = ({ auth, tasker, showModel, userModel, respond }) => {
 	const ensureAuthenticated = (req, res, next) => {
-		if (auth.isAuthenticated(req)) {
-			next();
-		} else {
-			respond.unauthorized(res);
+		const token = auth.getAuthToken(req);
+		if (!token) {
+			return respond.unauthorized(res);
 		}
+
+		const valid = auth.validateToken(token);
+		if (!valid.ok) {
+			respond.tokenExpired(res);
+		}
+
+		next();
 	};
 
 	return [
