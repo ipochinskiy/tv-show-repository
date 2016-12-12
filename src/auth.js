@@ -2,12 +2,6 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 exports.initialize = (userModel) => {
-	passport.serializeUser((user, done) => done(null, user.id));
-
-	passport.deserializeUser((id, done) => userModel.findOne({ id })
-		.then(user => done(null, user))
-		.catch(err => done(err)));
-
 	const strategy = new LocalStrategy(
 		{ usernameField: 'email' },
 		(email, password, done) => userModel.findOne({ email, password })
@@ -20,12 +14,8 @@ exports.initialize = (userModel) => {
 		initialize(...args) {
 			return passport.initialize.call(passport, ...args);
 		},
-		session(...args) {
-			return passport.session.call(passport, ...args);
-		},
 
-		authenticate: passport.authenticate('local'),
+		authenticate: passport.authenticate('local', { session: false }),
 
-		isAuthenticated: req => req.isAuthenticated(req),
 	};
 };

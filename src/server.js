@@ -2,10 +2,9 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const logger = require('morgan');
-const session = require('express-session');
 const compress = require('compression');
 
-exports.initialize = ({ env = 'dev', publicPath, sessionSecret, auth }) => {
+exports.initialize = ({ env = 'dev', publicPath, auth }) => {
 	const app = express();
 
 	app.use(compress());
@@ -16,10 +15,8 @@ exports.initialize = ({ env = 'dev', publicPath, sessionSecret, auth }) => {
 	app.use(bodyParser.urlencoded());
 
 	app.use(cookieParser());
-	app.use(session({ secret: sessionSecret }));
 
 	app.use(auth.initialize());
-	app.use(auth.session());
 
 	// TODO: replace with config property
 	// 1 day
