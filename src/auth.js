@@ -19,7 +19,7 @@ exports.initialize = (userModel, sessionSecret) => {
 
 		authenticate: passport.authenticate('local', { session: false }),
 
-		createToken = (user) => {
+		createToken: (user) => {
 			var payload = {
 				user,
 				iat: new Date().getTime(),
@@ -40,14 +40,12 @@ exports.initialize = (userModel, sessionSecret) => {
 
 		validateToken: (token) => {
 			try {
-				var decoded = jwt.decode(token, sessionSecret);
-				if (decoded.exp <= Date.now()) {
-					
-				} else {
-					return next();
-				}
+				const decoded = jwt.decode(token, sessionSecret);
+				return decoded.exp > Date.now() ?
+					{ tokenExpired: true } :
+					{ ok: true };
 			} catch (err) {
-				return { not }
+				return { parseError: true }
 			}
 		},
 	};

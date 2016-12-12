@@ -8,11 +8,16 @@ exports.initialize = ({ auth, tasker, showModel, userModel, respond }) => {
 		}
 
 		const valid = auth.validateToken(token);
-		if (!valid.ok) {
-			respond.tokenExpired(res);
+
+		if (valid.ok) {
+			return next();
 		}
 
-		next();
+		if (valid.tokenExpired) {
+			return respond.tokenExpired(res);
+		}
+
+		return respond.internalError(res);
 	};
 
 	return [

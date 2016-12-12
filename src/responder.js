@@ -4,6 +4,7 @@ const STATUS = {
 	OK: '200',
 	UNAUTHORIZED: '401',
 	TOKEN_EXPIRED: '400',
+	INTERNAL_ERROR: '500',
 };
 
 const respond = code => (res, body) => res.status(code).send(body || '');
@@ -22,4 +23,5 @@ module.exports = {
 	ok: respond(STATUS.OK),
 	unauthorized: respond(STATUS.UNAUTHORIZED),
 	tokenExpired: respond(STATUS.TOKEN_EXPIRED, 'Access token has expired'),
+	internalError: respond(STATUS.INTERNAL_ERROR, 'Internal error happened!'),
 };
