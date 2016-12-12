@@ -20,7 +20,9 @@ const userModel = require('./models/user-model').initialize({ crypter });
 
 const tasker = require('./tasker').initialize({ dbUrl, nodemailer, showModel });
 
-const auth = require('./auth').initialize(userModel);
+// TODO: get it from config
+const sessionSecret = 'keyboard cat';
+const auth = require('./auth').initialize(userModel, sessionSecret);
 
 const routes = require('./routes').initialize({
 	auth,
@@ -41,7 +43,6 @@ const server = serverLib.initialize({
 
 	// TODO: replace with a config property
 	env: 'dev',
-	sessionSecret: 'keyboard cat',
 });
 
 server.useRoutes(routes);

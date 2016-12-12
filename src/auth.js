@@ -1,7 +1,9 @@
+const jwt = require('jwt-simple');
 const passport = require('passport');
+
 const LocalStrategy = require('passport-local').Strategy;
 
-exports.initialize = (userModel) => {
+exports.initialize = (userModel, sessionSecret) => {
 	const strategy = new LocalStrategy(
 		{ usernameField: 'email' },
 		(email, password, done) => userModel.findOne({ email, password })
@@ -17,5 +19,36 @@ exports.initialize = (userModel) => {
 
 		authenticate: passport.authenticate('local', { session: false }),
 
+		createToken = (user) => {
+			var payload = {
+				user,
+				iat: new Date().getTime(),
+				// TODO: DI it
+				exp: moment().add('days', 7).valueOf(),
+			};
+			return jwt.encode(payload, sessionSecret);
+		},
+
+		getAuthToken: req => {
+			if (!req.headers.authorization) {
+				return null;
+			}
+
+			const chunks = req.headers.authorization.split[' '];
+			return chunks.length > 0 ? chunks[1] : null;
+		},
+
+		validateToken: (token) => {
+			try {
+				var decoded = jwt.decode(token, sessionSecret);
+				if (decoded.exp <= Date.now()) {
+					
+				} else {
+					return next();
+				}
+			} catch (err) {
+				return { not }
+			}
+		},
 	};
 };
