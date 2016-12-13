@@ -1,6 +1,4 @@
-const jwt = require('jwt-simple');
-
-exports.initialize = (userModel, sessionSecret, validityPeriod) => {
+exports.initialize = (jwt, userModel, sessionSecret, validityPeriod) => {
 	const getExpiryDate = () => new Date(Date.now() + validityPeriod * 1000);
 
 	return {
