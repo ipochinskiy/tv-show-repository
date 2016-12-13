@@ -22,7 +22,8 @@ const tasker = require('./tasker').initialize({ dbUrl, nodemailer, showModel });
 
 // TODO: get it from config
 const sessionSecret = 'keyboard cat';
-const auth = require('./auth').initialize(userModel, sessionSecret);
+const getAuthTokenExpiryDate = () => moment().add('days', 7).valueOf();
+const auth = require('./auth').initialize(userModel, sessionSecret, getAuthTokenExpiryDate);
 
 const routes = require('./routes').initialize({
 	auth,

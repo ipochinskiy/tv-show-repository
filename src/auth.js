@@ -3,7 +3,7 @@ const passport = require('passport');
 
 const LocalStrategy = require('passport-local').Strategy;
 
-exports.initialize = (userModel, sessionSecret) => {
+exports.initialize = (userModel, sessionSecret, getAuthTokenExpiryDate) => {
 	const strategy = new LocalStrategy(
 		{ usernameField: 'email' },
 		(email, password, done) => userModel.findOne({ email, password })
@@ -23,8 +23,7 @@ exports.initialize = (userModel, sessionSecret) => {
 			var payload = {
 				user,
 				iat: new Date().getTime(),
-				// TODO: DI it
-				exp: moment().add('days', 7).valueOf(),
+				exp: getAuthTokenExpiryDate(),
 			};
 			return jwt.encode(payload, sessionSecret);
 		},
