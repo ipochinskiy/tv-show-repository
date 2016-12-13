@@ -1,12 +1,14 @@
 const jwt = require('jwt-simple');
 
-exports.initialize = (userModel, sessionSecret, getAuthTokenExpiryDate) => {
+exports.initialize = (userModel, sessionSecret, validityPeriod) => {
+	const getExpiryDate = () => new Date(Date.now() + validityPeriod * 1000);
+
 	return {
 		createToken: (user) => {
 			var payload = {
 				user,
 				iat: new Date().getTime(),
-				exp: getAuthTokenExpiryDate(),
+				exp: getExpiryDate(),
 			};
 			return jwt.encode(payload, sessionSecret);
 		},
