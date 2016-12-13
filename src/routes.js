@@ -1,6 +1,6 @@
 const sugar = require('sugar');
 
-exports.initialize = ({ auth, tasker, showModel, userModel, respond }) => {
+exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 	const ensureAuthenticated = (req, res, next) => {
 		const token = auth.getAuthToken(req);
 		if (!token) {
@@ -10,6 +10,7 @@ exports.initialize = ({ auth, tasker, showModel, userModel, respond }) => {
 		const { decodedToken, tokenExpired } = auth.validateToken(token);
 
 		if (decodedToken) {
+			// TODO: change it!
 			req.user = decodedToken.user;
 			return next();
 		}
@@ -75,30 +76,21 @@ exports.initialize = ({ auth, tasker, showModel, userModel, respond }) => {
 					});
 			},
 		}, {
-			endpoint: '/api/login',
+			endpoint: '/auth/login',
 			method: 'post',
-			action: (req, res) => {
-				// TODO: replace the user with something more secure
-				res.cookie('user', JSON.stringify(req.user));
-				respond.ok(res, req.user);
-			},
+			action: (req, res) => authController.login(req, res),
 		}, {
-			endpoint: '/api/logout',
+			endpoint: '/auth/logout',
 			method: 'get',
-			action: (req, res) => {
-				req.logout();
-				respond.ok(res);
-			},
+			action: (req, res) => authController.logout(req, res),
 		}, {
-			endpoint: '/api/signup',
+			endpoint: '/auth/signup',
 			method: 'post',
-			action: (req, res, next) => userModel
-				.createUser({
-					email: req.body.email,
-					password: req.body.password,
-				})
+			action: (req, res, next) => {
+				authController.signup(req.body.email, req.body.password)
 				.then(() => respond.ok(res))
-				.catch(err => next(err)),
+					.catch(err => next(err));
+			},
 		}, {
 			endpoint: '/api/subscribe',
 			method: 'post',
