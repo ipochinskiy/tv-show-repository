@@ -22,10 +22,10 @@ exports.initialize = (userModel, sessionSecret, getAuthTokenExpiryDate) => {
 
 		validateToken: (token) => {
 			try {
-				const decoded = jwt.decode(token, sessionSecret);
-				return decoded.exp > Date.now() ?
+				const decodedToken = jwt.decode(token, sessionSecret);
+				return decodedToken.exp > Date.now() ?
 					{ tokenExpired: true } :
-					{ ok: true };
+					{ ok: true, decodedToken };
 			} catch (err) {
 				return { parseError: true }
 			}

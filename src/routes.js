@@ -7,13 +7,14 @@ exports.initialize = ({ auth, tasker, showModel, userModel, respond }) => {
 			return respond.unauthorized(res);
 		}
 
-		const valid = auth.validateToken(token);
+		const { decodedToken, tokenExpired } = auth.validateToken(token);
 
-		if (valid.ok) {
+		if (decodedToken) {
+			req.user = decodedToken.user;
 			return next();
 		}
 
-		if (valid.tokenExpired) {
+		if (tokenExpired) {
 			return respond.tokenExpired(res);
 		}
 
