@@ -11,7 +11,7 @@ const serverLib = require('./server');
 
 const respond = require('./responder');
 const crypter = require('./utils/crypter');
-const tvDbService = require('./services/tv-db-service');
+const tvDbService = require('./services/tvdb-service');
 
 database.initialize({ dbUrl });
 
