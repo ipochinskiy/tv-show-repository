@@ -16,8 +16,6 @@ exports.initialize = ({ env = 'dev', publicPath, auth }) => {
 
 	app.use(cookieParser());
 
-	app.use(auth.initialize());
-
 	// TODO: replace with config property
 	// 1 day
 	app.use(express.static(publicPath, { maxAge: 86400000 }));

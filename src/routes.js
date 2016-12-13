@@ -76,7 +76,6 @@ exports.initialize = ({ auth, tasker, showModel, userModel, respond }) => {
 		}, {
 			endpoint: '/api/login',
 			method: 'post',
-			auth: auth.authenticate,
 			action: (req, res) => {
 				// TODO: replace the user with something more secure
 				res.cookie('user', JSON.stringify(req.user));
