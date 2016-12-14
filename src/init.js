@@ -30,6 +30,14 @@ const auth = require('./services/auth').initialize(jwt, userModel, sessionSecret
 const { makeAuthController } = require('./controllers/auth-controller');
 const authController = makeAuthController({ userModel });
 
+const { makeShowController } = require('./controllers/show-controller');
+const sugar = require('sugar');
+const getAlertDate = (airsDayOfWeek, airsTime) => {
+	const nextAiring = sugar.Date.create(`Next ${airsDayOfWeek} at ${airsTime}`);
+	return sugar.Date.rewind(nextAiring, '2 hours');
+};
+const showController = makeShowController({ showModel, getAlertDate });
+
 const routes = require('./routes').initialize({
 	auth,
 	tasker,

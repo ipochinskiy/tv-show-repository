@@ -1,5 +1,3 @@
-const sugar = require('sugar');
-
 exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 	const ensureAuthenticated = (req, res, next) => {
 		const token = auth.getAuthToken(req);
@@ -26,53 +24,34 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 		{
 			endpoint: '/api/shows',
 			method: 'get',
-			action: (req, res, next) => showModel
-				.getFilteredShows({
-					genre: req.query.genre,
-					alphabet: req.query.alphabet,
-				})
-				.then(shows => respond.ok(res, shows))
-				.catch(err => next(err)),
+			action: (req, res, next) => {
+				showController.getShowsByFilter(req.query.genre, req.query.alphabet)
+					.then(result => respond.ok(res, result))
+					.catch(err => next(err));
+			},
 		}, {
 			endpoint: '/api/shows/:id',
 			method: 'get',
-			action: (req, res, next) => showModel
-				.getShow({ id: req.params.id })
-				.then(show => respond.ok(res, show))
-				.catch(err => next(err)),
+			action: (req, res, next) => {
+				showController.getShow(req.params.id)
+					.then(result => respond.ok(res, result))
+					.catch(err => next(err));
+			},
 		}, {
 			endpoint: '/api/shows',
 			method: 'post',
 			action: (req, res, next) => {
-				const seriesName = req.body.showName
-					.toLowerCase()
-					.replace(/ /g, '_')
-					.replace(/[^\w-]+/g, '');
-
-				// FIXME: by adding a show `am` or `ame` a buffer is shown to a user
-				return showModel.addShow({ seriesName })
-					.then(show => {
-						respond.ok(res);
-
-						if (!showModel.isShowEnded(show)) {
-							const message = `Next ${show.airsDayOfWeek} at ${show.airsTime}`;
-							const nextAiring = sugar.Date.create(message);
-							const alertDate = sugar.Date.rewind(nextAiring, '2 hours');
-							tasker.scheduleJob(alertDate, show);
+				const { showName } = req.body;
+				showController.addShow(showName)
+					.then(() => respond.ok(res))
+					.catch(error => {
+						if (error[respond.STATUS.NOT_FOUND]) {
+							return respond.notFound(res, `${showName} was not found.`);
+						} else if (error[respond.STATUS.ALREADY_EXISTS]) {
+							return respond.alreadyExists(res, `${showName} already exists.`);
 						}
 
-						return Promise.resolve({});
-					})
-					.catch(err => {
-						if (err[respond.STATUS.NOT_FOUND]) {
-							const message = `${req.body.showName} was not found.`;
-							return respond.notFound(res, message);
-						} else if (err[respond.STATUS.ALREADY_EXISTS]) {
-							const message = `${req.body.showName} already exists.`;
-							return respond.alreadyExists(res, message);
-						}
-
-						return next(err);
+						return next(error);
 					});
 			},
 		}, {
@@ -88,7 +67,7 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 			method: 'post',
 			action: (req, res, next) => {
 				authController.signup(req.body.email, req.body.password)
-				.then(() => respond.ok(res))
+					.then(() => respond.ok(res))
 					.catch(err => next(err));
 			},
 		}, {
