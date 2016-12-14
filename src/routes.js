@@ -22,6 +22,22 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 
 	return [
 		{
+			endpoint: '/auth/login',
+			method: 'post',
+			action: (req, res) => authController.login(req, res),
+		}, {
+			endpoint: '/auth/logout',
+			method: 'get',
+			action: (req, res) => authController.logout(req, res),
+		}, {
+			endpoint: '/auth/signup',
+			method: 'post',
+			action: (req, res, next) => {
+				authController.signup(req.body.email, req.body.password)
+					.then(() => respond.ok(res))
+					.catch(err => next(err));
+			},
+		}, {
 			endpoint: '/api/shows',
 			method: 'get',
 			action: (req, res, next) => {
@@ -53,22 +69,6 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 
 						return next(error);
 					});
-			},
-		}, {
-			endpoint: '/auth/login',
-			method: 'post',
-			action: (req, res) => authController.login(req, res),
-		}, {
-			endpoint: '/auth/logout',
-			method: 'get',
-			action: (req, res) => authController.logout(req, res),
-		}, {
-			endpoint: '/auth/signup',
-			method: 'post',
-			action: (req, res, next) => {
-				authController.signup(req.body.email, req.body.password)
-					.then(() => respond.ok(res))
-					.catch(err => next(err));
 			},
 		}, {
 			endpoint: '/api/subscribe',
