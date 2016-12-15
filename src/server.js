@@ -23,6 +23,7 @@ exports.initialize = ({ env = 'dev', publicPath, auth }) => {
 	return {
 		useRoutes: routesConfig => {
 			routesConfig.forEach(route => {
+				// TODO: it's too messy and not obvious => change it
 				if (route.auth) {
 					app[route.method](route.endpoint, route.auth, route.action);
 				}
