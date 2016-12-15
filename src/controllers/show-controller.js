@@ -21,5 +21,9 @@ exports.makeShowController = ({ showModel, getAlertDate }) => {
 					return Promise.resolve();
 				});
 		},
+
+		subscribe: (showId, userId) => showModel.subscribeTo({ showId, userId }),
+
+		unsubscribe: (showId, userId) => showModel.unsubscribeFrom({ showId, userId }),
 	};
 };

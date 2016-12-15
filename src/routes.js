@@ -1,4 +1,5 @@
 exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
+	// split and partly move to controller
 	const ensureAuthenticated = (req, res, next) => {
 		const token = auth.getAuthToken(req);
 		if (!token) {
@@ -58,6 +59,7 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 			method: 'post',
 			action: (req, res, next) => {
 				const { showName } = req.body;
+
 				showController.addShow(showName)
 					.then(() => respond.ok(res))
 					.catch(error => {
@@ -74,36 +76,36 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 			endpoint: '/api/subscribe',
 			method: 'post',
 			auth: ensureAuthenticated,
-			action: (req, res, next) => showModel.subscribeTo({
-				showId: req.body.showId,
-				userId: req.user.id,
-			})
-			.then(() => respond.ok(res))
-			.catch(err => {
-				if (err.notFound) {
-					const message = `${req.body.showName} was not found.`;
-					return respond.notFound(res, message);
-				}
+			action: (req, res, next) => {
+				const { showId, showName, id: userId } = req.body; // *._id ?
 
-				return next(err);
-			}),
+				showController.subscribe(showId, userId)
+					.then(() => respond.ok(res))
+					.catch(error => {
+						if (error.notFound) {
+							return respond.notFound(res, `${showName} was not found.`);
+						}
+
+						return next(error);
+					});
+			},
 		}, {
 			endpoint: '/api/unsubscribe',
 			method: 'post',
 			auth: ensureAuthenticated,
-			action: (req, res, next) => showModel.unsubscribeFrom({
-				showId: req.body.showId,
-				userId: req.user.id,
-			})
-			.then(() => respond.ok(res))
-			.catch(err => {
-				if (err.notFound) {
-					const message = `${req.body.showName} was not found.`;
-					return respond.notFound(res, message);
-				}
+			action: (req, res, next) => {
+				const { showId, showName, id: userId } = req.body; // *._id ?
 
-				return next(err);
-			}),
+				showController.subscribe(showId, userId)
+					.then(() => respond.ok(res))
+					.catch(error => {
+						if (error.notFound) {
+							return respond.notFound(res, `${showName} was not found.`);
+						}
+
+						return next(error);
+					});
+			},
 		}, {
 			endpoint: '*',
 			method: 'get',
