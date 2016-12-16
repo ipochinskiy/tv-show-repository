@@ -1,12 +1,10 @@
-exports.initialize = (jwt, userModel, sessionSecret, validityPeriod) => {
-	const getExpiryDate = () => new Date(Date.now() + validityPeriod * 1000);
-
+exports.initialize = (jwt, crypto, userModel, { sessionSecret, fbSecret, validityPeriod }) => {
 	return {
 		createToken: (user) => {
 			var payload = {
 				user,
 				iat: new Date().getTime(),
-				exp: getExpiryDate(),
+				exp: new Date(Date.now() + validityPeriod * 1000),
 			};
 			return jwt.encode(payload, sessionSecret);
 		},
@@ -29,6 +27,12 @@ exports.initialize = (jwt, userModel, sessionSecret, validityPeriod) => {
 			} catch (err) {
 				return { parseError: true }
 			}
+		},
+
+		// FIXME: think about decoupling hashing from composing a signature
+		getFacebookSignature: (payload) => {
+			const hash = crypto.createHmac('sha256', fbSecret).update(payload).digest('base64');
+			return hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 		},
 	};
 };
