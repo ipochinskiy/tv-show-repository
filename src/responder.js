@@ -22,6 +22,6 @@ module.exports = {
 	notFound: respond(STATUS.NOT_FOUND),
 	ok: respond(STATUS.OK),
 	unauthorized: respond(STATUS.UNAUTHORIZED),
-	tokenExpired: respond(STATUS.TOKEN_EXPIRED, 'Access token has expired'),
-	internalError: respond(STATUS.INTERNAL_ERROR, 'Internal error happened!'),
+	tokenExpired: (res) => respond(STATUS.TOKEN_EXPIRED)(res, 'Access token has expired'),
+	internalError: (res) => respond(STATUS.INTERNAL_ERROR)(res, 'Internal error happened!'),
 };
