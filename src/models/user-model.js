@@ -1,5 +1,6 @@
 const User = require('../schema/user-scheme');
 
+// TODO: replace crypter with #validatePassword()
 exports.initialize = ({ crypter }) => ({
 	createUser: ({ email, password }) => crypter.encrypt(password)
 		.then(hash => {
