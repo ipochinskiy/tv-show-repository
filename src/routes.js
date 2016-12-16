@@ -1,7 +1,7 @@
 exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 	// split and partly move to controller
 	const ensureAuthenticated = (req, res, next) => {
-		const token = auth.getAuthToken(req);
+		const token = auth.getAuthToken(req.headers);
 		if (!token) {
 			return respond.unauthorized(res);
 		}

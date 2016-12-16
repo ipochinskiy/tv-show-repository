@@ -11,12 +11,12 @@ exports.initialize = (jwt, userModel, sessionSecret, validityPeriod) => {
 			return jwt.encode(payload, sessionSecret);
 		},
 
-		getAuthToken: req => {
-			if (!req.headers.authorization) {
+		getAuthToken: (headers = {}) => {
+			if (!headers.authorization) {
 				return null;
 			}
 
-			const chunks = req.headers.authorization.split[' '];
+			const chunks = headers.authorization.split[' '];
 			return chunks.length > 0 ? chunks[1] : null;
 		},
 
