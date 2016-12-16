@@ -25,7 +25,15 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 		{
 			endpoint: '/auth/login',
 			method: 'post',
-			action: (req, res) => authController.login(req, res),
+			action: (req, res) => {
+				authController.login(req, res)
+					.then((token) => {
+						if (!token) {
+							return respond.unauthorized(res);
+						}
+						respond.ok({ token });
+					});
+			},
 		}, {
 			endpoint: '/auth/logout',
 			method: 'get',

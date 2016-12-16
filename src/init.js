@@ -28,7 +28,7 @@ const AUTH_TOKEN_VALIDITY_PERIOD_SECONDS = 7 * 24 * 60 * 60; // 7 days
 const auth = require('./services/auth').initialize(jwt, userModel, sessionSecret, AUTH_TOKEN_VALIDITY_PERIOD_SECONDS);
 
 const { makeAuthController } = require('./controllers/auth-controller');
-const authController = makeAuthController({ userModel });
+const authController = makeAuthController({ auth, userModel });
 
 const { makeShowController } = require('./controllers/show-controller');
 const sugar = require('sugar');
