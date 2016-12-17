@@ -79,7 +79,7 @@ exports.initialize = ({ tvDbService, respond }) => ({
 
 			return tvDbService.loadPoster({ poster: show.posterLink })
 				.then(posterData => {
-					// TODO: save this data into a local file
+					// TODO: save this data into a separate collection
 					show.posterData = posterData;
 					return Promise.resolve(new Show(show));
 				});
