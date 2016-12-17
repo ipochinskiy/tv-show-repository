@@ -47,6 +47,22 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 					.catch(err => next(err));
 			},
 		}, {
+			endpoint: '/auth/facebook',
+			method: 'post',
+			action: (req, res, next) => {
+				const { profile, signedRequest } = req.body;
+				const [ signature, payload, ...rest ] = signedRequest.split('.');
+
+				authController.fb(profile, signature, payload)
+					.then((token) => respond.ok({ token }))
+					.catch((error) => {
+						if (error.invalidSignature) {
+							return respond.badRequest('Invalid signature');
+						}
+						return next(error);
+					});
+			},
+		}, {
 			endpoint: '/api/shows',
 			method: 'get',
 			action: (req, res, next) => {
