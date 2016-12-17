@@ -23,7 +23,7 @@ exports.makeAuthController = ({ auth, userModel }) => {
 
 			return userModel.findOne({ facebook: profile.id })
 				.then((existingUser) => {
-					const newUser;
+					let newUser;
 					if (!existingUser) {
 						newUser = userModel.createOne({
 							facebook: profile.id,
