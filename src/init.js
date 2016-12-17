@@ -25,7 +25,8 @@ const jwt = require('jwt-simple');
 // TODO: get it from config
 const sessionSecret = 'keyboard cat';
 const AUTH_TOKEN_VALIDITY_PERIOD_SECONDS = 7 * 24 * 60 * 60; // 7 days
-const auth = require('./services/auth').initialize(jwt, userModel, {
+const crypto = require('crypto');
+const auth = require('./services/auth').initialize(jwt, crypto, userModel, {
 	sessionSecret,
 	fbSecret: '298fb6c080fda239b809ae418bf49700',		// FIXME: get it from config
 	validityPeriod: AUTH_TOKEN_VALIDITY_PERIOD_SECONDS,
