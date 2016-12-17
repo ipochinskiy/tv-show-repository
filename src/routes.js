@@ -15,7 +15,7 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 		}
 
 		if (tokenExpired) {
-			return respond.tokenExpired(res);
+			return respond.badRequest(res, 'Access token has expired');
 		}
 
 		return respond.internalError(res);

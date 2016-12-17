@@ -1,9 +1,9 @@
 const STATUS = {
-	ALREADY_EXISTS: '409',
-	NOT_FOUND: '404',
 	OK: '200',
+	BAD_REQUEST: '400',
 	UNAUTHORIZED: '401',
-	TOKEN_EXPIRED: '400',
+	NOT_FOUND: '404',
+	ALREADY_EXISTS: '409',
 	INTERNAL_ERROR: '500',
 };
 
@@ -12,6 +12,7 @@ const respond = code => (res, body) => res.status(code).send(body || '');
 module.exports = {
 	STATUS,
 
+	// FIXME: find more elegant way
 	createHttpError: (key) => {
 		const result = {};
 		result[key] = true;
@@ -22,6 +23,6 @@ module.exports = {
 	notFound: respond(STATUS.NOT_FOUND),
 	ok: respond(STATUS.OK),
 	unauthorized: respond(STATUS.UNAUTHORIZED),
-	tokenExpired: (res) => respond(STATUS.TOKEN_EXPIRED)(res, 'Access token has expired'),
+	badRequest: respond(STATUS.BAD_REQUEST),
 	internalError: (res) => respond(STATUS.INTERNAL_ERROR)(res, 'Internal error happened!'),
 };
