@@ -2,18 +2,26 @@ const User = require('../schema/user-scheme');
 
 // TODO: replace crypter with #validatePassword()
 exports.initialize = ({ crypter }) => ({
-	createUser: ({ email, password }) => crypter.encrypt(password)
-		.then(hash => {
-			const user = new User({
-				email,
-				password: hash,
-			});
-			return user.save();
-		}),
+	createUser: (params = {}) => {
+		if (params.facebook) {
+			return new User(params).save();
+		}
 
-	findOne: ({ id, email, password }) => {
+		return crypter.encrypt(params.password)
+			.then(hash => {
+				const user = new User({
+					email: params.email,
+					password: hash,
+				});
+				return user.save();
+			});
+	},
+
+	findOne: ({ id, email, facebook, password }) => {
 		if (id) {
 			return User.findById(id).exec();
+		} else if (facebook) {
+			return User.findOne({ facebook }).exec();
 		} else if (!email || !password) {
 			return Promise.resolve(null);
 		}

@@ -15,5 +15,25 @@ exports.makeAuthController = ({ auth, userModel }) => {
 			req.logout();
 			respond.ok(res);
 		},
+
+		fb: (profile, signature, payload) => {
+			if (signature !== auth.getFacebookSignature(payload)) {
+				return Promise.reject({ invalidSignature: true });
+			}
+
+			return userModel.findOne({ facebook: profile.id })
+				.then((existingUser) => {
+					const newUser;
+					if (!existingUser) {
+						newUser = userModel.createOne({
+							facebook: profile.id,
+							firstName: profile.first_name,
+							lastName: profile.last_name
+						});
+					}
+					const token = auth.createJwtToken(existingUser || newUser);
+					return { ok: true, token };
+				});
+		},
 	};
 };
