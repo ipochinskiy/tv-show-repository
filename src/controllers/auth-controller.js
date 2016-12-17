@@ -1,3 +1,4 @@
+ /* eslint-disable arrow-body-style */
 exports.makeAuthController = ({ auth, userModel }) => {
 	return {
 		signup: (email, password) => userModel.createUser({ email, password }),
@@ -11,10 +12,10 @@ exports.makeAuthController = ({ auth, userModel }) => {
 		},
 		// FIXME: req and res should not be there
 		// FIXME: don't use response from here
-		logout: (req, res) => {
-			req.logout();
-			respond.ok(res);
-		},
+		// logout: (req, res) => {
+		// 	req.logout();
+		// 	respond.ok(res);
+		// },
 
 		fb: (profile, signature, payload) => {
 			if (signature !== auth.getFacebookSignature(payload)) {
@@ -28,7 +29,7 @@ exports.makeAuthController = ({ auth, userModel }) => {
 						newUser = userModel.createOne({
 							facebook: profile.id,
 							firstName: profile.first_name,
-							lastName: profile.last_name
+							lastName: profile.last_name,
 						});
 					}
 					const token = auth.createJwtToken(existingUser || newUser);

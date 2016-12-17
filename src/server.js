@@ -4,7 +4,7 @@ const express = require('express');
 const logger = require('morgan');
 const compress = require('compression');
 
-exports.initialize = ({ env = 'dev', publicPath, auth }) => {
+exports.initialize = ({ env = 'dev', publicPath }) => {
 	const app = express();
 
 	app.use(compress());

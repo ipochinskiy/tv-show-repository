@@ -1,4 +1,4 @@
-exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
+exports.initialize = ({ auth, authController, showController, respond }) => {
 	// split and partly move to controller
 	const ensureAuthenticated = (req, res, next) => {
 		const token = auth.getAuthToken(req.headers);
@@ -10,7 +10,7 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 
 		if (decodedToken) {
 			// TODO: change it!
-			req.user = decodedToken.user;
+			req.user = decodedToken.user; // eslint-disable-line no-param-reassign
 			return next();
 		}
 
@@ -21,19 +21,19 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 		return respond.internalError(res);
 	};
 
+	// TODO: my profile route:
+	// https://github.com/sahat/tvshow-tracker/commit/caf1b9a2d331ee3d279e22f547abcc74b48562f6#diff-78c12f5adc1848d13b1c6f07055d996eR133
 	return [
 		{
 			endpoint: '/auth/login',
 			method: 'post',
-			action: (req, res) => {
-				authController.login(req.body.email, req.body.password)
-					.then((token) => {
-						if (!token) {
-							return respond.unauthorized(res);
-						}
-						respond.ok({ token });
-					});
-			},
+			action: (req, res) => authController.login(req.body.email, req.body.password)
+				.then((token) => {
+					if (!token) {
+						return respond.unauthorized(res);
+					}
+					return respond.ok({ token });
+				}),
 		}, {
 			endpoint: '/auth/logout',
 			method: 'get',
@@ -41,19 +41,17 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 		}, {
 			endpoint: '/auth/signup',
 			method: 'post',
-			action: (req, res, next) => {
-				authController.signup(req.body.email, req.body.password)
-					.then(() => respond.ok(res))
-					.catch(err => next(err));
-			},
+			action: (req, res, next) => authController.signup(req.body.email, req.body.password)
+				.then(() => respond.ok(res))
+				.catch(err => next(err)),
 		}, {
 			endpoint: '/auth/facebook',
 			method: 'post',
 			action: (req, res, next) => {
 				const { profile, signedRequest } = req.body;
-				const [ signature, payload, ...rest ] = signedRequest.split('.');
+				const [ signature, payload ] = signedRequest.split('.');
 
-				authController.fb(profile, signature, payload)
+				return authController.fb(profile, signature, payload)
 					.then((token) => respond.ok({ token }))
 					.catch((error) => {
 						if (error.invalidSignature) {
@@ -65,26 +63,23 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 		}, {
 			endpoint: '/api/shows',
 			method: 'get',
-			action: (req, res, next) => {
-				showController.getShowsByFilter(req.query.genre, req.query.alphabet)
-					.then(result => respond.ok(res, result))
-					.catch(err => next(err));
-			},
+			action: (req, res, next) => showController
+				.getShowsByFilter(req.query.genre, req.query.alphabet)
+				.then(result => respond.ok(res, result))
+				.catch(err => next(err)),
 		}, {
 			endpoint: '/api/shows/:id',
 			method: 'get',
-			action: (req, res, next) => {
-				showController.getShow(req.params.id)
-					.then(result => respond.ok(res, result))
-					.catch(err => next(err));
-			},
+			action: (req, res, next) => showController.getShow(req.params.id)
+				.then(result => respond.ok(res, result))
+				.catch(err => next(err)),
 		}, {
 			endpoint: '/api/shows',
 			method: 'post',
 			action: (req, res, next) => {
 				const { showName } = req.body;
 
-				showController.addShow(showName)
+				return showController.addShow(showName)
 					.then(() => respond.ok(res))
 					.catch(error => {
 						if (error[respond.STATUS.NOT_FOUND]) {
@@ -103,7 +98,7 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 			action: (req, res, next) => {
 				const { showId, showName, id: userId } = req.body; // *._id ?
 
-				showController.subscribe(showId, userId)
+				return showController.subscribe(showId, userId)
 					.then(() => respond.ok(res))
 					.catch(error => {
 						if (error.notFound) {
@@ -120,7 +115,7 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 			action: (req, res, next) => {
 				const { showId, showName, id: userId } = req.body; // *._id ?
 
-				showController.subscribe(showId, userId)
+				return showController.subscribe(showId, userId)
 					.then(() => respond.ok(res))
 					.catch(error => {
 						if (error.notFound) {

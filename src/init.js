@@ -33,21 +33,22 @@ const auth = require('./services/auth').initialize(jwt, crypto, userModel, {
 });
 
 const { makeAuthController } = require('./controllers/auth-controller');
+const { makeShowController } = require('./controllers/show-controller');
+
 const authController = makeAuthController({ auth, userModel });
 
-const { makeShowController } = require('./controllers/show-controller');
 const sugar = require('sugar');
+
 const getAlertDate = (airsDayOfWeek, airsTime) => {
 	const nextAiring = sugar.Date.create(`Next ${airsDayOfWeek} at ${airsTime}`);
 	return sugar.Date.rewind(nextAiring, '2 hours');
 };
-const showController = makeShowController({ showModel, getAlertDate });
+const showController = makeShowController({ showModel, tasker, getAlertDate });
 
 const routes = require('./routes').initialize({
 	auth,
-	tasker,
-	showModel,
 	authController,
+	showController,
 	respond,
 });
 
@@ -57,7 +58,6 @@ const baseDir = path.join(__dirname, '..');
 const publicPath = path.join(baseDir, 'public');
 
 const server = serverLib.initialize({
-	auth,
 	publicPath,
 
 	// TODO: replace with a config property

@@ -1,10 +1,11 @@
+ /* eslint-disable arrow-body-style */
 exports.initialize = (jwt, crypto, userModel, { sessionSecret, fbSecret, validityPeriod }) => {
 	return {
 		createToken: (user) => {
-			var payload = {
+			const payload = {
 				user,
 				iat: new Date().getTime(),
-				exp: new Date(Date.now() + validityPeriod * 1000),
+				exp: new Date(Date.now() + (validityPeriod * 1000)),
 			};
 			return jwt.encode(payload, sessionSecret);
 		},
@@ -25,7 +26,7 @@ exports.initialize = (jwt, crypto, userModel, { sessionSecret, fbSecret, validit
 					{ tokenExpired: true } :
 					{ ok: true, decodedToken };
 			} catch (err) {
-				return { parseError: true }
+				return { parseError: true };
 			}
 		},
 

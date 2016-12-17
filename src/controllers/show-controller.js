@@ -1,4 +1,5 @@
-exports.makeShowController = ({ showModel, getAlertDate }) => {
+ /* eslint-disable arrow-body-style */
+exports.makeShowController = ({ showModel, tasker, getAlertDate }) => {
 	return {
 		getShowsByFilter: (genre, alphabet) => showModel.getFilteredShows({ genre, alphabet }),
 
