@@ -26,7 +26,7 @@ exports.initialize = ({ auth, tasker, showModel, authController, respond }) => {
 			endpoint: '/auth/login',
 			method: 'post',
 			action: (req, res) => {
-				authController.login(req, res)
+				authController.login(req.body.email, req.body.password)
 					.then((token) => {
 						if (!token) {
 							return respond.unauthorized(res);

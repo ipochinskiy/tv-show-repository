@@ -2,8 +2,8 @@ exports.makeAuthController = ({ auth, userModel }) => {
 	return {
 		signup: (email, password) => userModel.createUser({ email, password }),
 		// FIXME: req and res should not be there
-		login: (email, encodedPassword) => {
-			userModel.findOne()
+		login: (email, password) => {
+			userModel.findOne({ email, password })
 				.then((user) => {
 					const result = user ? auth.createToken(user) : null;
 					return Promise.resolve(result);
