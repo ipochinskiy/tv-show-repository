@@ -63,7 +63,7 @@ angular.module('MyApp').factory(
 					.success((data, status, headers, config) => {
 						$window.localStorage.token = data.token;
 						$rootScope.currentUser = parseCurrentUser(data.token);
-						$location.path(config.loginRedirect);
+						$location.path('/');
 
 						$alert({
 							title: 'Cheers!',
