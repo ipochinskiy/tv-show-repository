@@ -42,7 +42,7 @@ angular.module('MyApp').factory(
 							signedRequest: response.authResponse.signedRequest,
 							profile: profile
 						};
-						$http.post(config.providers.facebook.url, data).success(function (token) {
+						$http.post('/auth/facebook', data).success(function (token) {
 							const payload = JSON.parse($window.atob(token.split('.')[1]));
 							$window.localStorage.token = token;
 							$rootScope.currentUser = parseCurrentUser(token);
@@ -59,7 +59,7 @@ angular.module('MyApp').factory(
 				}, { scope: 'email, public_profile' });
 			},
 			login(user) {
-				return $http.post('/api/login', user)
+				return $http.post('/auth/login', user)
 					.success((data, status, headers, config) => {
 						$window.localStorage.token = data.token;
 						$rootScope.currentUser = parseCurrentUser(data.token);
@@ -85,7 +85,7 @@ angular.module('MyApp').factory(
 					});
 			},
 			signup(user) {
-				return $http.post('/api/signup', user)
+				return $http.post('/auth/signup', user)
 					.success(() => {
 						$location.path('/login');
 
