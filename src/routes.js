@@ -78,7 +78,7 @@ exports.initialize = ({ auth, authController, showController, respond }) => {
 				return showController.addShow(showName)
 					.then(() => respond.ok(res))
 					.catch(error => {
-						if (error[respond.STATUS.NOT_FOUND]) {
+						if (error[respond.STATUS.BAD_REQUEST]) {
 							return respond.notFound(res, `${showName} was not found.`);
 						} else if (error[respond.STATUS.ALREADY_EXISTS]) {
 							return respond.alreadyExists(res, `${showName} already exists.`);
