@@ -1,5 +1,6 @@
 const concat = require('gulp-concat');
 const csso = require('gulp-csso');
+const ngmin = require('gulp-ngmin');
 const del = require('del');
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
@@ -57,6 +58,7 @@ gulp.task('compress', [], () => {
         .pipe(plumber())
         .pipe(sourcemaps.init())
         .pipe(concat('app.min.js'))
+        .pipe(ngmin())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('public'));
 });
