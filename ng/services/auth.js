@@ -1,16 +1,25 @@
 angular.module('MyApp').factory(
 	'Auth',
-	function ($http, $location, $rootScope, $cookieStore, $alert, $window) {
+	function ($http, $location, $rootScope, $alert, $window) {
+		const parseCurrentUser = (token = '') => {
+			const firstChunk = token.split('.')[1];
+			const payloadString = $window.atob(firstChunk);
+			const payload = JSON.parse(payloadString);
+			return payload.user;
+		};
+
+
 		const token = $window.localStorage.token;
-		$rootScope.currentUser = $cookieStore.get('user');
-		$cookieStore.remove('user');
+		if (token) {
+			$rootScope.currentUser = parseCurrentUser(token);
+		}
 
 		$window.fbAsyncInit = function () {
 			FB.init({
 				appId: '624059410963642',
 				responseType: 'token',
 				locale: 'en_US',
-				version: 'v2.0'
+				version: 'v2.0',
 			});
 		};
 
@@ -36,7 +45,7 @@ angular.module('MyApp').factory(
 						$http.post(config.providers.facebook.url, data).success(function (token) {
 							const payload = JSON.parse($window.atob(token.split('.')[1]));
 							$window.localStorage.token = token;
-							$rootScope.currentUser = payload.user;
+							$rootScope.currentUser = parseCurrentUser(token);
 							$location.path('/');
 							$alert({
 								title: 'Cheers!',
@@ -53,8 +62,8 @@ angular.module('MyApp').factory(
 				return $http.post('/api/login', user)
 					.success((data, status, headers, config) => {
 						$window.localStorage.token = data.token;
-						$rootScope.currentUser = data.user;
-						$location.path('/');
+						$rootScope.currentUser = parseCurrentUser(data.token);
+						$location.path(config.loginRedirect);
 
 						$alert({
 							title: 'Cheers!',
@@ -65,7 +74,7 @@ angular.module('MyApp').factory(
 						});
 					})
 					.error(() => {
-						$window.localStorage.removeItem('token');
+						delete $window.localStorage.token;			// TODO: consider setting to null
 						$alert({
 							title: 'Error!',
 							content: 'Invalid username or password.',
@@ -101,8 +110,8 @@ angular.module('MyApp').factory(
 			logout() {
 				return $http.get('/api/logout')
 					.success(() => {
+						delete $window.localStorage.token;			// TODO: consider setting to null
 						$rootScope.currentUser = null;
-						$cookieStore.remove('user');
 						$alert({
 							content: 'You have been logged out.',
 							placement: 'top-right',
