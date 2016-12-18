@@ -58,7 +58,7 @@ gulp.task('compress', [], () => {
         .pipe(plumber())
         .pipe(sourcemaps.init())
         .pipe(concat('app.min.js'))
-        .pipe(ngmin())
+        // .pipe(ngmin())       // TODO: consider babelifying the code before #ngmin()
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('public'));
 });
