@@ -26,4 +26,23 @@ angular.module('MyApp', ['ngResource', 'ngMessages', 'ngRoute', 'ngAnimate', 'mg
 		.otherwise({
 			redirectTo: '/',
 		});
+	})
+	.config(function ($httpProvider) {
+		$httpProvider.interceptors.push(($rootScope, $q, $window, $location) => ({
+			request(config) {
+				if ($window.localStorage.token) {
+					config.headers.Authorization = `Bearer ${$window.localStorage.token}`;
+				}
+				return config;
+			},
+			responseError(response) {
+				if (response.status === 401 || response.status === 403) {
+					$location.path('/login');
+				}
+				return $q.reject(response);
+			},
+		});
+	})
+	.run(function($rootScope, $location) {
+
 	});
