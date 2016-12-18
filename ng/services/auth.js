@@ -1,6 +1,15 @@
 angular.module('MyApp').factory(
 	'Auth',
 	function ($http, $location, $rootScope, $alert, $window) {
+		const alert = (type, obj) => Object.assign({
+			type,
+			placement: 'top-right',
+			duration: 3,
+		}, obj);
+		const alertInfo = (title, content) => alert('info', { title, content });
+		const alertError = (title, content) => alert('danger', { title, content });
+		const alertSuccess = (title, content) => alert('success', { title, content });
+
 		const parseCurrentUser = (token = '') => {
 			const firstChunk = token.split('.')[1];
 			const payloadString = $window.atob(firstChunk);
@@ -47,13 +56,7 @@ angular.module('MyApp').factory(
 							$window.localStorage.token = token;
 							$rootScope.currentUser = parseCurrentUser(token);
 							$location.path('/');
-							$alert({
-								title: 'Cheers!',
-								content: 'You have successfully signed-in with Facebook.',
-								placement: 'top-right',
-								type: 'success',
-								duration: 3,
-							});
+							alertSuccess('Cheers!', 'You have successfully signed-in with Facebook.');
 						});
 					});
 				}, { scope: 'email, public_profile' });
@@ -65,57 +68,25 @@ angular.module('MyApp').factory(
 						$rootScope.currentUser = parseCurrentUser(data.token);
 						$location.path('/');
 
-						$alert({
-							title: 'Cheers!',
-							content: 'You have successfully logged in.',
-							placement: 'top-right',
-							type: 'success',
-							duration: 3,
-						});
+						alertSuccess('Cheers!', 'You have successfully logged in.');
 					})
 					.error(() => {
 						delete $window.localStorage.token;			// TODO: consider setting to null
-						$alert({
-							title: 'Error!',
-							content: 'Invalid username or password.',
-							placement: 'top-right',
-							type: 'danger',
-							duration: 3,
-						});
+						alertError('Error!', 'Invalid username or password.');
 					});
 			},
 			signup(user) {
 				return $http.post('/auth/signup', user)
 					.success(() => {
 						$location.path('/login');
-
-						$alert({
-							title: 'Congratulations!',
-							content: 'Your account has been created.',
-							placement: 'top-right',
-							type: 'success',
-							duration: 3,
-						});
+						alertSuccess('Congratulations!', 'Your account has been created.');
 					})
-					.error((response) => {
-						$alert({
-							title: 'Error!',
-							content: response.data,
-							placement: 'top-right',
-							type: 'danger',
-							duration: 3,
-						});
-					});
+					.error((response) => alertError('Error!', response.data));
 			},
 			logout() {
 				delete $window.localStorage.token;			// TODO: consider setting to null
 				$rootScope.currentUser = null;
-				$alert({
-					content: 'You have been logged out.',
-					placement: 'top-right',
-					type: 'info',
-					duration: 3,
-				});
+				alertInfo('', 'You have been logged out.');
 			},
 		};
 	}
