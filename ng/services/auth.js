@@ -8,7 +8,6 @@ angular.module('MyApp').factory(
 			return payload.user;
 		};
 
-
 		const token = $window.localStorage.token;
 		if (token) {
 			$rootScope.currentUser = parseCurrentUser(token);
@@ -18,19 +17,20 @@ angular.module('MyApp').factory(
 			FB.init({
 				appId: '624059410963642',
 				responseType: 'token',
-				locale: 'en_US',
 				version: 'v2.0',
 			});
 		};
 
-		(function (d, s, id) {
-			const js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) {
+		(function (doc, script, id) {
+			if (doc.getElementById(id)) {
 				return;
 			}
-			js = d.createElement(s);
+
+			const js = doc.createElement(script);
 			js.id = id;
-			js.src = `//connect.facebook.net/${config.providers.facebook.locale}/sdk.js`;
+			js.src = `//connect.facebook.net/en_US/sdk.js`;
+
+			const fjs = doc.getElementsByTagName(script)[0];
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 
@@ -39,8 +39,8 @@ angular.module('MyApp').factory(
 				FB.login(function (response) {
 					FB.api('/me', function (profile) {
 						const data = {
+							profile,
 							signedRequest: response.authResponse.signedRequest,
-							profile: profile
 						};
 						$http.post('/auth/facebook', data).success(function (token) {
 							const payload = JSON.parse($window.atob(token.split('.')[1]));
