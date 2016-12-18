@@ -10,12 +10,6 @@ exports.makeAuthController = ({ auth, userModel }) => {
 					return Promise.resolve(result);
 				});
 		},
-		// FIXME: req and res should not be there
-		// FIXME: don't use response from here
-		// logout: (req, res) => {
-		// 	req.logout();
-		// 	respond.ok(res);
-		// },
 
 		fb: (profile, signature, payload) => {
 			if (signature !== auth.getFacebookSignature(payload)) {

@@ -108,17 +108,14 @@ angular.module('MyApp').factory(
 					});
 			},
 			logout() {
-				return $http.get('/api/logout')
-					.success(() => {
-						delete $window.localStorage.token;			// TODO: consider setting to null
-						$rootScope.currentUser = null;
-						$alert({
-							content: 'You have been logged out.',
-							placement: 'top-right',
-							type: 'info',
-							duration: 3,
-						});
-					});
+				delete $window.localStorage.token;			// TODO: consider setting to null
+				$rootScope.currentUser = null;
+				$alert({
+					content: 'You have been logged out.',
+					placement: 'top-right',
+					type: 'info',
+					duration: 3,
+				});
 			},
 		};
 	}

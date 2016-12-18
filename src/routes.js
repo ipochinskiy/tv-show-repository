@@ -35,10 +35,6 @@ exports.initialize = ({ auth, authController, showController, respond }) => {
 					return respond.ok({ token });
 				}),
 		}, {
-			endpoint: '/auth/logout',
-			method: 'get',
-			action: (req, res) => authController.logout(req, res),
-		}, {
 			endpoint: '/auth/signup',
 			method: 'post',
 			action: (req, res, next) => authController.signup(req.body.email, req.body.password)
