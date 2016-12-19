@@ -4,6 +4,8 @@ angular.module('MyApp').controller('LoginCtrl', function ($scope, Auth) {
 			email: $scope.email,
 			password: $scope.password,
 		});
+
+		$scope.facebookLogin = Auth.facebookLogin;
 	};
 
 	$scope.pageClass = 'fadeZoom';
