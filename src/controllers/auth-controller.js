@@ -21,9 +21,11 @@ exports.makeAuthController = ({ auth, userModel }) => {
 					let newUser;
 					if (!existingUser) {
 						newUser = userModel.createOne({
-							facebook: profile.id,
-							firstName: profile.first_name,
-							lastName: profile.last_name,
+							name: profile.name,
+							facebook: {
+								id: profile.id,
+								email: profile.email,
+							},
 						});
 					}
 					const token = auth.createJwtToken(existingUser || newUser);
