@@ -1,7 +1,7 @@
  /* eslint-disable arrow-body-style */
 exports.makeAuthController = ({ auth, userModel }) => {
 	return {
-		signup: (email, password) => userModel.createUser({ email, password }),
+		signup: (name, email, password) => userModel.createUser({ name, email, password }),
 
 		login: (email, password) => {
 			userModel.findOne({ email, password })

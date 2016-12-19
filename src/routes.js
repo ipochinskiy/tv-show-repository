@@ -37,7 +37,7 @@ exports.initialize = ({ auth, authController, showController, userModel, respond
 		}, {
 			endpoint: '/auth/signup',
 			method: 'post',
-			action: (req, res, next) => authController.signup(req.body.email, req.body.password)
+			action: (req, res, next) => authController.signup(req.body.name, req.body.email, req.body.password)
 				.then(() => respond.ok(res))
 				.catch(err => next(err)),
 		}, {
