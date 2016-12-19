@@ -1,5 +1,4 @@
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const express = require('express');
 const logger = require('morgan');
 const compress = require('compression');
@@ -13,8 +12,6 @@ exports.initialize = ({ env = 'dev', publicPath }) => {
 
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded());
-
-	app.use(cookieParser());
 
 	// TODO: replace with config property
 	// 1 day
