@@ -1,14 +1,13 @@
 angular.module('MyApp').factory(
 	'Auth',
 	function ($http, $location, $rootScope, $alert, $window) {
-		const alert = (type, obj) => Object.assign({
-			type,
-			placement: 'top-right',
+		const alert = (title, content) => $alert({
+			title,
+			content,
+			type: 'material',
+			animation: 'fadeZoomFadeDown',
 			duration: 3,
-		}, obj);
-		const alertInfo = (title, content) => alert('info', { title, content });
-		const alertError = (title, content) => alert('danger', { title, content });
-		const alertSuccess = (title, content) => alert('success', { title, content });
+		});
 
 		const parseCurrentUser = (token = '') => {
 			const firstChunk = token.split('.')[1];
@@ -56,7 +55,7 @@ angular.module('MyApp').factory(
 							$window.localStorage.token = token;
 							$rootScope.currentUser = parseCurrentUser(token);
 							$location.path('/');
-							alertSuccess('Cheers!', 'You have successfully signed-in with Facebook.');
+							alert('Cheers!', 'You have successfully signed-in with Facebook.');
 						});
 					});
 				}, { scope: 'email, public_profile' });
@@ -68,25 +67,25 @@ angular.module('MyApp').factory(
 						$rootScope.currentUser = parseCurrentUser(data.token);
 						$location.path('/');
 
-						alertSuccess('Cheers!', 'You have successfully logged in.');
+						alert('Cheers!', 'You have successfully logged in.');
 					})
 					.error(() => {
 						delete $window.localStorage.token;			// TODO: consider setting to null
-						alertError('Error!', 'Invalid username or password.');
+						alert('Error!', 'Invalid username or password.');
 					});
 			},
 			signup(user) {
 				return $http.post('/auth/signup', user)
 					.success(() => {
 						$location.path('/login');
-						alertSuccess('Congratulations!', 'Your account has been created.');
+						alert('Congratulations!', 'Your account has been created.');
 					})
-					.error((response) => alertError('Error!', response.data));
+					.error((response) => alert('Error!', response.data));
 			},
 			logout() {
 				delete $window.localStorage.token;			// TODO: consider setting to null
 				$rootScope.currentUser = null;
-				alertInfo('', 'You have been logged out.');
+				alert('', 'You have been logged out.');
 			},
 		};
 	}
