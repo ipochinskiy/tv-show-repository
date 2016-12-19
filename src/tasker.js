@@ -24,7 +24,10 @@ exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 				agenda.cancel({ name: jobNames.nextAiring, data: show.name }, done);
 			}
 
-			const emails = show.subscribers.map(user => user.email);
+			const emails = show.subscribers.map((user) => {
+				const email = user.facebook ? user.facebook : user.email;
+				return email;
+			});
 
 			const upcomingEpisode = show.episodes.filter(episode =>
 				new Date(episode.firstAired) > new Date())[0];
