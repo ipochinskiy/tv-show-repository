@@ -49,6 +49,7 @@ const routes = require('./routes').initialize({
 	auth,
 	authController,
 	showController,
+	userModel,
 	respond,
 });
 

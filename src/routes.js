@@ -1,4 +1,4 @@
-exports.initialize = ({ auth, authController, showController, respond }) => {
+exports.initialize = ({ auth, authController, showController, userModel, respond }) => {
 	// split and partly move to controller
 	const ensureAuthenticated = (req, res, next) => {
 		const token = auth.getAuthToken(req.headers);
@@ -55,6 +55,20 @@ exports.initialize = ({ auth, authController, showController, respond }) => {
 						}
 						return next(error);
 					});
+			},
+		}, {
+			endpoint: '/api/users',
+			method: 'get',
+			action: (req, res, next) => {
+				const { email } = req.query;
+
+				if (!email) {
+					return respond.badRequest('Email parameter is required.');
+				}
+
+				userModel.findOne({ email })
+					.then((user) => respond.ok(res, JSON.stringify({ available: !user })))
+					.catch(err => next(err));
 			},
 		}, {
 			endpoint: '/api/shows',
