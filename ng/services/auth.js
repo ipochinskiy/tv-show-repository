@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 angular.module('MyApp').factory(
 	'Auth',
 	function ($http, $location, $rootScope, $alert, $window) {
@@ -36,7 +37,7 @@ angular.module('MyApp').factory(
 
 			const js = doc.createElement(script);
 			js.id = id;
-			js.src = `//connect.facebook.net/en_US/sdk.js`;
+			js.src = '//connect.facebook.net/en_US/sdk.js';
 
 			const fjs = doc.getElementsByTagName(script)[0];
 			fjs.parentNode.insertBefore(js, fjs);
@@ -50,10 +51,9 @@ angular.module('MyApp').factory(
 							profile,
 							signedRequest: response.authResponse.signedRequest,
 						};
-						$http.post('/auth/facebook', data).success(function (token) {
-							const payload = JSON.parse($window.atob(token.split('.')[1]));
-							$window.localStorage.token = token;
-							$rootScope.currentUser = parseCurrentUser(token);
+						$http.post('/auth/facebook', data).success((receivedToken) => {
+							$window.localStorage.token = receivedToken;
+							$rootScope.currentUser = parseCurrentUser(receivedToken);
 							$location.path('/');
 							alert('Cheers!', 'You have successfully signed-in with Facebook.');
 						});
@@ -62,7 +62,8 @@ angular.module('MyApp').factory(
 			},
 			login(user) {
 				return $http.post('/auth/login', user)
-					.success((data, status, headers, config) => {
+					// .success((data, status, headers, config) => {
+					.success((data) => {
 						$window.localStorage.token = data.token;
 						$rootScope.currentUser = parseCurrentUser(data.token);
 						$location.path('/');
@@ -90,3 +91,4 @@ angular.module('MyApp').factory(
 		};
 	}
 );
+/* eslint-enable prefer-arrow-callback */

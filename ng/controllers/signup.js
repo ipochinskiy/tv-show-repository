@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 angular.module('MyApp').controller('SignupCtrl', function ($scope, Auth) {
 	$scope.signup = function () {
 		Auth.signup({
@@ -9,3 +10,4 @@ angular.module('MyApp').controller('SignupCtrl', function ($scope, Auth) {
 
 	$scope.pageClass = 'fadeZoom';
 });
+/* eslint-enable prefer-arrow-callback */

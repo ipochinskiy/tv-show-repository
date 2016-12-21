@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 angular.module('MyApp')
 	.directive('uniqueEmail', function ($http) {
 		return {
@@ -11,11 +12,12 @@ angular.module('MyApp')
 							params: {
 								email: ngModel.$modelValue,
 							},
-						}).success((data) ngModel.$setValidity('unique', data.available));
+						}).success((data) => ngModel.$setValidity('unique', data.available));
 					}
 				});
 
 				element.bind('keyup', () => ngModel.$setValidity('unique', true));
-			}
+			},
 		};
 	});
+/* eslint-enable prefer-arrow-callback */

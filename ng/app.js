@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 angular.module('MyApp', ['ngResource', 'ngMessages', 'ngRoute', 'ngAnimate', 'mgcrea.ngStrap'])
 	.config(function ($locationProvider, $routeProvider) {
 		$locationProvider.html5Mode(true);
@@ -27,7 +28,7 @@ angular.module('MyApp', ['ngResource', 'ngMessages', 'ngRoute', 'ngAnimate', 'mg
 			redirectTo: '/',
 		});
 	})
-	.config(function ($httpProvider) {
+	.config(($httpProvider) => {
 		$httpProvider.interceptors.push(($rootScope, $q, $window, $location) => ({
 			request(config) {
 				if ($window.localStorage.token) {
@@ -41,8 +42,7 @@ angular.module('MyApp', ['ngResource', 'ngMessages', 'ngRoute', 'ngAnimate', 'mg
 				}
 				return $q.reject(response);
 			},
-		});
+		}));
 	})
-	.run(function($rootScope, $location) {
-
-	});
+	.run(($rootScope, $location) => {});		// eslint-disable-line no-unused-vars
+/* eslint-enable prefer-arrow-callback */

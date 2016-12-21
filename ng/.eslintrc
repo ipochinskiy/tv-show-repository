@@ -17,6 +17,8 @@
     "angular": true,
     "moment": true,
     "NProgress": true,
+    "FB": true,
+    "document": true,
   },
 }
 

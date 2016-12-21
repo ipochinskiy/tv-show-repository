@@ -37,9 +37,12 @@ exports.initialize = ({ auth, authController, showController, userModel, respond
 		}, {
 			endpoint: '/auth/signup',
 			method: 'post',
-			action: (req, res, next) => authController.signup(req.body.name, req.body.email, req.body.password)
-				.then(() => respond.ok(res))
-				.catch(err => next(err)),
+			action: (req, res, next) => {
+				const { name, email, password } = req.body;
+				return authController.signup(name, email, password)
+					.then(() => respond.ok(res))
+					.catch(err => next(err));
+			},
 		}, {
 			endpoint: '/auth/facebook',
 			method: 'post',
@@ -66,7 +69,7 @@ exports.initialize = ({ auth, authController, showController, userModel, respond
 					return respond.badRequest('Email parameter is required.');
 				}
 
-				userModel.findOne({ email })
+				return userModel.findOne({ email })
 					.then((user) => respond.ok(res, JSON.stringify({ available: !user })))
 					.catch(err => next(err));
 			},

@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 angular.module('MyApp').controller('AddCtrl', function ($scope, $alert, Show) {
 	$scope.addShow = function () {
 		Show.save({ showName: $scope.showName },
@@ -24,3 +25,4 @@ angular.module('MyApp').controller('AddCtrl', function ($scope, $alert, Show) {
 		);
 	};
 });
+/* eslint-enable prefer-arrow-callback */

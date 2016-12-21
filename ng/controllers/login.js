@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 angular.module('MyApp').controller('LoginCtrl', function ($scope, Auth) {
 	$scope.login = function () {
 		Auth.login({
@@ -10,3 +11,4 @@ angular.module('MyApp').controller('LoginCtrl', function ($scope, Auth) {
 
 	$scope.pageClass = 'fadeZoom';
 });
+/* eslint-enable prefer-arrow-callback */
