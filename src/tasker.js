@@ -25,8 +25,13 @@ exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 			}
 
 			const emails = show.subscribers.map((user) => {
-				const email = user.facebook ? user.facebook : user.email;
-				return email;
+				if (user.facebook) {
+					return user.facebook.email;
+				} else if (user.google) {
+					return user.google.email;
+				} else {
+					return user.email;
+				}
 			});
 
 			const upcomingEpisode = show.episodes.filter(episode =>
