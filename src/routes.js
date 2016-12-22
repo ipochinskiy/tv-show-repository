@@ -60,6 +60,20 @@ exports.initialize = ({ auth, authController, showController, userModel, respond
 					});
 			},
 		}, {
+			endpoint: '/auth/google',
+			method: 'post',
+			action: (req, res, next) => {
+				const { profile } = req.body;
+				return authController.google(profile)
+					.then((token) => respond.ok({ token }))
+					.catch((error) => {
+						if (error.invalidSignature) {
+							return respond.badRequest('Invalid signature');
+						}
+						return next(error);
+					});
+			},
+		}, {
 			endpoint: '/api/users',
 			method: 'get',
 			action: (req, res, next) => {
