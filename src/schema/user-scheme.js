@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema({
 		id: String,
 		email: String,
 	},
+	google: {
+		id: String,
+		email: String,
+	},
 });
 
 const User = mongoose.model('User', userSchema);
