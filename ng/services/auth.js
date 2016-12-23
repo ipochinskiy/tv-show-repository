@@ -92,11 +92,7 @@ angular.module('MyApp').factory(
 					gapi.client.load('plus', 'v1', function() {
 						const request = gapi.client.plus.people.get({ userId: 'me' });
 						request.execute((response) => {
-							const data = {
-								accessToken: receivedToken.access_token,
-								profile: response,
-							};
-							$http.post('/auth/google', data)
+							$http.post('/auth/google', { profile: response })
 								.success(authCallback('Google'));
 						});
 					});
