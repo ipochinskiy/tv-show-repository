@@ -57,7 +57,7 @@ angular.module('MyApp').factory(
 			$rootScope.currentUser = parseCurrentUser(receivedToken);
 			$location.path('/');
 			alert('Cheers!', `You have successfully signed-in with ${network}.`);
-		}
+		};
 
 		const googleKeys = {
 			client_id: '55262601920-5jhf3qth89okujq6a7lh8bqc9epr8475.apps.googleusercontent.com',
@@ -87,9 +87,9 @@ angular.module('MyApp').factory(
 					});
 				}, { scope: 'email, public_profile' });
 			},
-			googleLogin: function() {
-				gapi.auth.authorize(googleKeys, (receivedToken) => {
-					gapi.client.load('plus', 'v1', function() {
+			googleLogin() {
+				gapi.auth.authorize(googleKeys, (receivedToken) => {		// eslint-disable-line no-unused-vars, max-len
+					gapi.client.load('plus', 'v1', () => {
 						const request = gapi.client.plus.people.get({ userId: 'me' });
 						request.execute((response) => {
 							$http.post('/auth/google', { profile: response })

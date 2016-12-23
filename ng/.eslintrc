@@ -19,6 +19,7 @@
     "NProgress": true,
     "FB": true,
     "document": true,
+    "gapi": true,
   },
 }
 

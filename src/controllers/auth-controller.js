@@ -1,8 +1,7 @@
  /* eslint-disable arrow-body-style */
 exports.makeAuthController = ({ auth, userModel }) => {
-
 	function authSocial(authMethod, profile) {
-		return userModel.findOne({ `${authMethod}.id`: profile.id })
+		return userModel.findOne({ [`${authMethod}.id`]: profile.id })
 			.then((existingUser) => {
 				let newUser;
 				if (!existingUser) {

@@ -29,9 +29,8 @@ exports.initialize = ({ dbUrl, nodemailer, showModel }) => {
 					return user.facebook.email;
 				} else if (user.google) {
 					return user.google.email;
-				} else {
-					return user.email;
 				}
+				return user.email;
 			});
 
 			const upcomingEpisode = show.episodes.filter(episode =>
