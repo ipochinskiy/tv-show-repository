@@ -1,20 +1,68 @@
 /* eslint-disable prefer-arrow-callback */
+
+const makeAlert = ($alert) => (title, content) => $alert({
+	title,
+	content,
+	type: 'material',
+	animation: 'fadeZoomFadeDown',
+	duration: 3,
+});
+
+const makeParser = ($window) => (token = '') => {
+	const firstChunk = token.split('.')[1];
+	const payloadString = $window.atob(firstChunk);
+	const payload = JSON.parse(payloadString);
+	return payload.user;
+};
+
+function initializeFbSdk($window) {
+	$window.fbAsyncInit = () => FB.init({
+		appId: '624059410963642',
+		responseType: 'token',
+		version: 'v2.0',
+	});
+}
+
+function loadFbSdk(doc, script, id) {
+	if (doc.getElementById(id)) {
+		return;
+	}
+
+	const js = doc.createElement(script);
+	js.id = id;
+	js.src = '//connect.facebook.net/en_US/sdk.js';
+
+	const fjs = doc.getElementsByTagName(script)[0];
+	fjs.parentNode.insertBefore(js, fjs);
+}
+
+function loadGoogleSdk(document) {
+	const po = document.createElement('script');
+	po.type = 'text/javascript';
+	po.async = true;
+	po.src = 'https://apis.google.com/js/client:plusone.js';
+
+	const s = document.getElementsByTagName('script')[0];
+	s.parentNode.insertBefore(po, s);
+}
+
 angular.module('MyApp').factory(
 	'Auth',
 	function ($http, $location, $rootScope, $alert, $window) {
-		const alert = (title, content) => $alert({
-			title,
-			content,
-			type: 'material',
-			animation: 'fadeZoomFadeDown',
-			duration: 3,
-		});
+		const alert = makeAlert($alert);
+		const parseCurrentUser = makeParser($window);
 
-		const parseCurrentUser = (token = '') => {
-			const firstChunk = token.split('.')[1];
-			const payloadString = $window.atob(firstChunk);
-			const payload = JSON.parse(payloadString);
-			return payload.user;
+		const authCallback = (network) => (receivedToken) => {
+			$window.localStorage.token = receivedToken;
+			$rootScope.currentUser = parseCurrentUser(receivedToken);
+			$location.path('/');
+			alert('Cheers!', `You have successfully signed-in with ${network}.`);
+		}
+
+		const googleKeys = {
+			client_id: '55262601920-5jhf3qth89okujq6a7lh8bqc9epr8475.apps.googleusercontent.com',
+			scope: 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read',
+			immediate: false,
 		};
 
 		const token = $window.localStorage.token;
@@ -22,26 +70,9 @@ angular.module('MyApp').factory(
 			$rootScope.currentUser = parseCurrentUser(token);
 		}
 
-		$window.fbAsyncInit = function () {
-			FB.init({
-				appId: '624059410963642',
-				responseType: 'token',
-				version: 'v2.0',
-			});
-		};
-
-		(function (doc, script, id) {
-			if (doc.getElementById(id)) {
-				return;
-			}
-
-			const js = doc.createElement(script);
-			js.id = id;
-			js.src = '//connect.facebook.net/en_US/sdk.js';
-
-			const fjs = doc.getElementsByTagName(script)[0];
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
+		initializeFbSdk($window);
+		loadFbSdk(document, 'script', 'facebook-jssdk');
+		loadGoogleSdk(document);
 
 		return {
 			facebookLogin() {
@@ -51,14 +82,25 @@ angular.module('MyApp').factory(
 							profile,
 							signedRequest: response.authResponse.signedRequest,
 						};
-						$http.post('/auth/facebook', data).success((receivedToken) => {
-							$window.localStorage.token = receivedToken;
-							$rootScope.currentUser = parseCurrentUser(receivedToken);
-							$location.path('/');
-							alert('Cheers!', 'You have successfully signed-in with Facebook.');
-						});
+						$http.post('/auth/facebook', data)
+							.success(authCallback('Facebook'));
 					});
 				}, { scope: 'email, public_profile' });
+			},
+			googleLogin: function() {
+				gapi.auth.authorize(googleKeys, (receivedToken) => {
+					gapi.client.load('plus', 'v1', function() {
+						const request = gapi.client.plus.people.get({ userId: 'me' });
+						request.execute((response) => {
+							const data = {
+								accessToken: receivedToken.access_token,
+								profile: response,
+							};
+							$http.post('/auth/google', data)
+								.success(authCallback('Google'));
+						});
+					});
+				});
 			},
 			login(user) {
 				return $http.post('/auth/login', user)

@@ -7,6 +7,7 @@ angular.module('MyApp').controller('LoginCtrl', function ($scope, Auth) {
 		});
 
 		$scope.facebookLogin = Auth.facebookLogin;
+		$scope.googleLogin = Auth.googleLogin;
 	};
 
 	$scope.pageClass = 'fadeZoom';
