@@ -23,16 +23,18 @@ function initializeFbSdk($window) {
 	});
 }
 
-function loadFbSdk(doc, script, id) {
-	if (doc.getElementById(id)) {
+function loadFbSdk(document) {
+	const id = 'facebook-jssdk';
+
+	if (document.getElementById(id)) {
 		return;
 	}
 
-	const js = doc.createElement(script);
+	const js = document.createElement('script');
 	js.id = id;
 	js.src = '//connect.facebook.net/en_US/sdk.js';
 
-	const fjs = doc.getElementsByTagName(script)[0];
+	const fjs = document.getElementsByTagName('script')[0];
 	fjs.parentNode.insertBefore(js, fjs);
 }
 
@@ -71,7 +73,7 @@ angular.module('MyApp').factory(
 		}
 
 		initializeFbSdk($window);
-		loadFbSdk(document, 'script', 'facebook-jssdk');
+		loadFbSdk(document);
 		loadGoogleSdk(document);
 
 		return {
