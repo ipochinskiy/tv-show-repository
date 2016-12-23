@@ -43,6 +43,5 @@ angular.module('MyApp', ['ngResource', 'ngMessages', 'ngRoute', 'ngAnimate', 'mg
 				return $q.reject(response);
 			},
 		}));
-	})
-	.run(($rootScope, $location) => {});		// eslint-disable-line no-unused-vars
+	});
 /* eslint-enable prefer-arrow-callback */
