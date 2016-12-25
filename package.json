@@ -8,7 +8,8 @@
     "server": "node --harmony src/init",
     "start": "npm run build && npm run server",
     "lint": "eslint src ng",
-    "watch:frontend": "gulp watch"
+    "watch:frontend": "gulp watch",
+    "test": "karma start karma.conf.js"
   },
   "dependencies": {
     "agenda": "^0.9.0",
@@ -44,6 +45,7 @@
     "gulp-plumber": "^1.1.0",
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^2.2.0",
+    "karma": "^1.3.0",
     "rimraf": "^2.5.4"
   }
 }
