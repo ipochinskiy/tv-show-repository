@@ -32,7 +32,7 @@ exports.initialize = ({ auth, authController, showController, userModel, respond
 					if (!token) {
 						return respond.unauthorized(res);
 					}
-					return respond.ok({ token });
+					return respond.ok(res, { token });
 				}),
 		}, {
 			endpoint: '/auth/signup',
@@ -51,10 +51,10 @@ exports.initialize = ({ auth, authController, showController, userModel, respond
 				const [ signature, payload ] = signedRequest.split('.');
 
 				return authController.fb(profile, signature, payload)
-					.then((token) => respond.ok({ token }))
+					.then((token) => respond.ok(res, { token }))
 					.catch((error) => {
 						if (error.invalidSignature) {
-							return respond.badRequest('Invalid signature');
+							return respond.badRequest(res, 'Invalid signature');
 						}
 						return next(error);
 					});
@@ -65,10 +65,10 @@ exports.initialize = ({ auth, authController, showController, userModel, respond
 			action: (req, res, next) => {
 				const { profile } = req.body;
 				return authController.google(profile)
-					.then((token) => respond.ok({ token }))
+					.then((token) => respond.ok(res, { token }))
 					.catch((error) => {
 						if (error.invalidSignature) {
-							return respond.badRequest('Invalid signature');
+							return respond.badRequest(res, 'Invalid signature');
 						}
 						return next(error);
 					});
@@ -80,7 +80,7 @@ exports.initialize = ({ auth, authController, showController, userModel, respond
 				const { email } = req.query;
 
 				if (!email) {
-					return respond.badRequest('Email parameter is required.');
+					return respond.badRequest(res, 'Email parameter is required.');
 				}
 
 				return userModel.findOne({ email })
