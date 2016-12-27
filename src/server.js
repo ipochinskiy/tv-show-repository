@@ -30,6 +30,7 @@ exports.initialize = ({ env = 'dev', publicPath }) => {
 
 			app.use((err, req, res) => {
 				console.error(err.stack);
+				// TODO: replace with responder
 				res.status(500).send({ message: err.message });
 			});
 		},
