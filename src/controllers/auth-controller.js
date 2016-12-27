@@ -22,7 +22,7 @@ exports.makeAuthController = ({ auth, userModel }) => {
 		signup: (name, email, password) => userModel.createUser({ name, email, password }),
 
 		login: (email, password) => {
-			userModel.findOne({ email, password })
+			return userModel.findOne({ email, password })
 				.then((user) => {
 					const result = user ? auth.createToken(user) : null;
 					return Promise.resolve(result);
