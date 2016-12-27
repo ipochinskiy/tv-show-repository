@@ -10,6 +10,7 @@ exports.initialize = ({ crypter }) => ({
 		return crypter.encrypt(params.password)
 			.then(hash => {
 				const user = new User({
+					name: params.name,
 					email: params.email,
 					password: hash,
 				});
