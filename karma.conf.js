@@ -13,6 +13,17 @@ module.exports = function (config) {
 			'test/ng/*.js'
 		],
 
+		preprocessors: {
+			'ng/**/*.js': ['babel'],
+			'test/**/*.spec.js': ['babel'],
+		},
+
+		babelPreprocessor: {
+			options: {
+				"presets": ["es2015"],
+			},
+		},
+
 		autoWatch: true,
 
 		frameworks: ['jasmine'],
@@ -22,7 +33,8 @@ module.exports = function (config) {
 		plugins: [
 			'karma-phantomjs-launcher',
 			'karma-chrome-launcher',
-			'karma-jasmine'
+			'karma-jasmine',
+			'karma-babel-preprocessor',
 		]
 	});
 };
