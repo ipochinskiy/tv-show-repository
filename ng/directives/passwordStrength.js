@@ -1,6 +1,8 @@
 /* eslint-disable prefer-arrow-callback, no-return-assign */
 angular.module('MyApp')
 	.directive('passwordStrength', function () {
+		const spans = '<span></span><span></span><span></span><span></span>';
+
 		return {
 			restrict: 'A',
 			require: 'ngModel',
@@ -32,11 +34,7 @@ angular.module('MyApp')
 					}
 				});
 			},
-			template: `
-				<span class="password-strength-indicator">
-					<span></span><span></span><span></span><span></span>
-				</span>
-			`,
+			template: `<span class="password-strength-indicator">${spans}</span>`,
 		};
 	});
 /* eslint-enable prefer-arrow-callback, no-return-assign */
